@@ -40,7 +40,7 @@ CSAPP/
 
 ## Progress Tracker
 
-- [ ] Chapter 1: A Tour of Computer Systems
+- [x] Chapter 1: A Tour of Computer Systems
 - [ ] Chapter 2: Representing and Manipulating Information
 - [ ] Chapter 3: Machine-Level Representation of Programs
 - [ ] Chapter 4: Processor Architecture
