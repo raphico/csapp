@@ -81,3 +81,33 @@ A. 0x503c + 0x8 = 0x5044
 B. 0x503c − 0x40 = 0x4ffc
 C. 0x503c + 64 = 0x507c
 D. 0x50ea − 0x503c = 0xae
+
+# Practice problem 2.5
+
+A. Little endian: 21 Big endian: 87
+B. Little endian: 2143 Big endian: 8765
+C. Little endian: 214365 Big endian: 876543
+
+# Practice problem 2.6
+
+A.
+
+`0x00359141 = 0000 0000 0011 0101 1001 0001 0100 0001 = 00000000001101011001000101000001`
+
+`0x4A564504 = 0100 1010 0101 0110 0100 0101 0000 0100 = 01001010011001000101000001101000 `
+
+B.
+
+```
+a = 0000 0000 0011 0101 1001 0001 0100 0001
+b =   0100 1010 0101 0110 0100 0101 0000 0100
+```
+
+When shifted optimally (place b starting at a's index 2), 26 bits match
+
+C.
+
+The bits that don't match:
+
+1. The a's two leading bits, and the b's two least-significant bits
+2. And four bits inside the overlapped area
