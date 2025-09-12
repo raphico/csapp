@@ -51,3 +51,7 @@ Byte ordering is often abstracted away from application programmers. However, th
 1. Networking: Different machines on a network may use different endianness, so they most both translate to and from a common network standard
 2. Low-level memory inspection: When looking at raw byte sequence, endianness can cause values to appear reversed, especially on little-endian machines
 3. Casting: casting objects to raw byte pointers (common in C), they can directly observe the byte-level layout of different types. This reveals endianness differences, as well as the distinct representations of integers, floats, and pointers.
+
+## 2.1.5 Representing strings
+
+A string is encoded as a null-terminated array of characters. Each character is represented using an encoding standard such as ASCII or Unicode, which map bit patterns to characters. Since strings are variable-length, the end is marked with the NUL character ('\0'), whose hexadecimal value is 0x00. This ensures programs know where the string ends. Because encodings like ASCII are standardized, text data is more platform-independent than binary data.

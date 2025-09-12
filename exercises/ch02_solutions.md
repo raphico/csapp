@@ -111,3 +111,7 @@ The bits that don't match:
 
 1. The a's two leading bits, and the b's two least-significant bits
 2. And four bits inside the overlapped area
+
+# Practice problem 2.7
+
+`616263646566`
