@@ -130,3 +130,19 @@ so `~0` produces a mask of all ones:
 - On a 32-bit machine `~0` gives 32 ones = `0xFFFFFFFF`
 - On a 64-bit machine `~0` gives 64 ones = `0xFFFFFFFFFFFFFFFF`
 - Making ~0 more portable across systems than hardcoding `0xFFFFFFFF`
+
+## 2.1.9 Logical operations in C
+
+C has logical operators (|| -> OR, && -> AND, ! -> NOT) that look similar to bitwise operators but behave differently:
+
+- nonzero values are treated as True and 0 as false
+- They return either 1 (True) or 0 (False)
+- Example: 0x56 && 0x33 = 1, because they are both nonzero
+
+Key differences:
+
+- scope: Logical operators work on whole values (true/false), not individual bits
+- short-circuiting:
+  - && stops if the first value is False
+  - || stops if the first value is True
+  - This prevents unnecessary evaluation

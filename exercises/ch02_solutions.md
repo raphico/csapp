@@ -196,3 +196,16 @@ C.`x | 0xFF`
 # Practice problem 2.13
 
 [solution](../code/ch02_vax.c)
+
+# Practice problem 2.14
+
+| Expression | Value | Expression | Value |
+| ---------- | ----- | ---------- | ----- |
+| x & y      | 0x20  | x && y     | 1     |
+| x \| y     | 0x7F  | x \|\| y   | 1     |
+| \~x \| \~y | 0xDF  | !x \|\| !y | 0     |
+| x & !y     | 0x00  | x && ~y    | 1     |
+
+# Practice problem 2.15
+
+!(x ^ y)
