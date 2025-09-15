@@ -146,3 +146,23 @@ Key differences:
   - && stops if the first value is False
   - || stops if the first value is True
   - This prevents unnecessary evaluation
+
+## 2.1.10 Shift operations in C
+
+Shift operations are bitwise operations, but instead of combining bits that move the bits of a binary number left or right:
+
+1. Left shift: moves bits left by k, drops the leftmost k bits, and fills in k zeros on the right
+2. Right shift: moves bits right by k, drops the rightmost k bits, and how the left is filled depends on the type:
+   - Logical right shift: fills in k zeros on the left
+   - Arithmetic right shift: fills with copies of the most significant bit (preserves sign for signed numbers)
+
+Examples:
+
+[01100011] << 4 -> [00110000]
+[10010101] >> 4 logical -> [00001001]
+[10010101] >> 4 arithmetic -> [11111001]
+
+C rules:
+
+- `unsigned` -> right shift is always logical
+- `signed` -> implementation-dependent, but almost all systems use arithmetic shifts.
