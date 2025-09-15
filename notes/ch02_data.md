@@ -55,3 +55,45 @@ Byte ordering is often abstracted away from application programmers. However, th
 ## 2.1.5 Representing strings
 
 A string is encoded as a null-terminated array of characters. Each character is represented using an encoding standard such as ASCII or Unicode, which map bit patterns to characters. Since strings are variable-length, the end is marked with the NUL character ('\0'), whose hexadecimal value is 0x00. This ensures programs know where the string ends. Because encodings like ASCII are standardized, text data is more platform-independent than binary data.
+
+## 2.1.6 Representing code
+
+Programs, at machine-level, are just sequence of bytes with no knowledge of the original source code. Because different machine types, and even same processor under different operating system, use different and often incompatible instruction encodings, binary code is rarely portable across systems
+
+## 2.1.7 Introduction to Boolean Algebra
+
+Logic is about checking whether a statement follows from other statements.
+
+- Logic rules or operations are basic rules for combining truth values (True/False). In computers, these truth values are represented as 0s and 1s. For example:
+  - AND (&): outputs 1 only if both inputs are 1
+  - OR (|): outputs 1 if at least one input is 1
+  - NOT (~): flips 1 to 0 and 0 to 1
+  - XOR (^): outputs 1 if both inputs are different
+- Logic reasoning is the process applying these rules to reach conclusions: start with assumptions (premises), apply operations (AND, OR, NOT), and arrive at conclusions that must be true if the premises are true
+- Logic matters because it prevents contradictions, ensures correctness in math, and gives computers rules for making decisions. At the hardware level, computers represent and process data with on/off signals (0s and 1s) and use logic operations to combine these bits into meaningful outcomes or outputs
+
+Boolean algebra is a branch of mathematics that deals with variables having two possible values, 0 and 1, and with logic operations that captures the basic rules of logic reasoning
+
+- It represent truth values (True/False) as binary values (1/0)
+- It defines logic operations such as:
+  - AND (^)
+  - OR (v)
+  - NOT (¬)
+
+It matters because it gives precise, mathematical way to describe and manipulate logic, which provides the foundation for digital circuits, and programming, used to simplify digital circuits and design complex decision making processes
+
+A bit vector can represent a finite set, where each position in the vector corresponds to an element in the set {0, 1, ..., w - 1}. The rightmost bit is a<sub>0<sub>, the next is a<sub>1<sub>, and so on, up to a<sub>w - 1<sub> on the left. A bit value of 1 means the element is in the set, while a bit value of 0 means it is not. For example, given the bit vector:
+
+a = [01101001]
+
+a<sub>0<sub> = 1, therefore element 0 is in the set
+a<sub>1<sub> = 0, therefore element 1 is not in the set
+a<sub>2<sub> = 0, therefore element 2 is not in the set
+.
+.
+.
+a<sub>7<sub> = 0, there element 7 is not in the set
+
+Therefore, the bit vector encodes the set: A = {0, 3, 5, 6}
+
+With this way of encoding sets, boolean operations | and & correspond to set union and intersection
