@@ -150,3 +150,49 @@ B.
 Blue | Green = [001] | [010] = [011] = Cyan
 Yellow & Cyan = [110] | [011] = [010] = Green
 Red ^ Magenta = [100] | [101] = [001] = Blue
+
+# Practice problem 2.10
+
+| Step      | x                                   | y                                   |
+| --------- | ----------------------------------- | ----------------------------------- |
+| Initially | a                                   | b                                   |
+| Step 1    | a                                   | a ^ b                               |
+| Step 2    | a ^ (a ^ b) = a ^ a ^ b = 0 ^ b = b | a ^ b                               |
+| Step 3    | b                                   | b ^ (a ^ b) = b ^ b ^ a = 0 ^ a = a |
+
+# Practice problem 2.11
+
+A.
+
+For an array of length 2k + 1, the middle element is at index k. In the last iteration, the loop condition is `first <= last`, so `first = last = k`
+
+B.
+
+We pass the address to the same element, so inside the xor_swap function call: `*y = *x ^ *y = 0`. After that line the value is destroyed and set to 0. The rest just shuffle zeros
+
+C.
+
+By stopping the iteration when the first meets the last:
+
+```c
+for (first = 0, last = cnt - 1;
+    first < last;
+    first++, last--) {
+    }
+```
+
+# Practice problem 2.12
+
+A. `0xFF & x`
+
+B.
+
+`~x & ~0xFF` -> flips of byte of x then sets the least significant to zero
+`x & 0xFF` -> zeros out all byte except the least significant byte
+`(~x & ~0xFF) | (x & 0xFF)`
+
+C.`x | 0xFF`
+
+# Practice problem 2.13
+
+[solution](../code/ch02_vax.c)

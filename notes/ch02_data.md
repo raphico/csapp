@@ -97,3 +97,36 @@ a<sub>7<sub> = 0, there element 7 is not in the set
 Therefore, the bit vector encodes the set: A = {0, 3, 5, 6}
 
 With this way of encoding sets, boolean operations | and & correspond to set union and intersection
+
+## 2.1.8 Bit-Level Operations in C
+
+A bitwise operation is an operation that acts directly on individual bits of a binary number. In C, the operators map directly to Boolean algebra:
+
+- & → AND
+- | → OR
+- ~ → NOT
+- ^ → XOR (exclusive OR)
+
+These operators can be applied to any integral type (e.g. char, int, short, long, unsigned versions, etc.). To understand their effect, it easier to:
+
+1. Convert the values from hexadecimal to binary
+2. apply the operation bit by bit
+3. covert the result back to hexadecimal
+
+### Bit masking
+
+Bit masking refers to the using of bitwise operations to "zero out" or "pick out" specific parts of a binary number. For example using `0xFF` as a mask:
+
+- `0xFF` in binary is `11111111`
+- `x & 0xFF` means that "keep only the lowest 8 bits of x, and turn everything else into 0"
+
+Using `~0`:
+
+- `~0` means "bitwise NOT of 0"
+- In binary, 0 is all zeros, flipping all bits gives all ones
+
+so `~0` produces a mask of all ones:
+
+- On a 32-bit machine `~0` gives 32 ones = `0xFFFFFFFF`
+- On a 64-bit machine `~0` gives 64 ones = `0xFFFFFFFFFFFFFFFF`
+- Making ~0 more portable across systems than hardcoding `0xFFFFFFFF`
