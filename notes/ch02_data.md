@@ -315,3 +315,22 @@ When casting between unsigned value and signed value (with the same word size), 
 4. Signed to unsigned conversion, plus promotion, can produce different result depending on the order
    - When converting an signed short to an unsigned int, C first promotes the short to an int before casting to unsigned
    - If we instead cast to int before promotion, we would get a different result
+
+### 2.2.7 Truncating Numbers
+
+Truncation means reducing a number from a wider word size (w bits) to a narrower one (k bits). This is achieve by dropping the upper (w - k) bits and keeping the lower k bits.
+
+- For unsigned numbers:
+
+  - Truncating is equivalent to computing the remainder mod 2<sup>k</sup>: new value = x mod 2<sup>k</sup>.
+  - This ensures that the result is always within the representable range (0 to 2<sup>k</sup> - 1), and "wraps-around" if it exceeds
+
+- For two's complement (signed) numbers:
+
+  - We still take low k bits, which equal x mod 2<sup>k</sup>.
+  - But then, we reinterpret those k-bits as a two's complement integer: new value = U2T<sub>w</sub>(x mod 2<sup>k</sup>).
+  - This means the truncated value could now be negative if the most significant bit of the k-bit result is 1
+
+### 2.2.8 Advice on Signed vs Unsigned
+
+Implicit casting can lead subtle, non-intuitive behavior, especially when converting between signed and unsigned types. Because this conversion without any clear indication, it easy for programmers to overlook and introduce bugs. Unsigned integers in C often cause subtle bugs due to implicit signed–unsigned conversions, so many languages (like Java) avoid them entirely and use only two’s-complement signed integers. Still, unsigned types are useful when treating data as raw bits (e.g., flags, addresses) or when implementing modular and multiprecision arithmetic

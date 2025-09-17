@@ -381,3 +381,29 @@ C. [111011] -> -32 + 16 + 8 + 0 + 2 + 1 = -5
 
 - func1 extracts the least significant byte, zero-extended
 - func2 extracts the least significant byte, sign-extended
+
+# Practice problem 2.24
+
+| **Hex Original** | **Hex Truncated** | **Unsigned Original** | **Unsigned Truncated** | **Two’s complement Original** | **Two’s complement Truncated** |
+| ---------------- | ----------------- | --------------------- | ---------------------- | ----------------------------- | ------------------------------ |
+| 0                | 0                 | 0                     | 0                      | 0                             | 0                              |
+| 2                | 2                 | 2                     | 2                      | 2                             | 2                              |
+| 9                | 1                 | 9                     | 1                      | -7                            | 1                              |
+| B                | 3                 | 11                    | 3                      | -5                            | 3                              |
+| F                | 7                 | 15                    | 7                      | -1                            | -1                             |
+
+# Practice problem 2.25
+
+The problem arises because length is unsigned. when length is 0, the expression length - 1 doesn't produce -1 but 0xFFFFFFFF (on a 32-bit machine, due to an implicit casting from signed to unsigned) which is about 4 billion. So the loop attempts to access memory beyond the bounds of the array, resulting in a memory error.
+
+This can be fixed by just updating the loop condition `i < length` instead of `i <= length - 1`
+
+# Practice problem 2.26
+
+**A & B:**
+
+strlen returns a size_t (an unsigned int). In the expression strlen(s) - strlen(t), both values are unsigned, so the subtraction is performed in unsigned arithmetic. So if the subtraction is negative, the result maps to a very large unsigned value. so the condition > 0 evaluates to true instead of false
+
+**C:**
+
+Casting both values to an signed int `(int) strlen(s) - (int) strlen(t) > 0`
