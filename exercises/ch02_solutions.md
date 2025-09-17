@@ -359,3 +359,25 @@ For values between 0 <= x <= 2<sup>w - 1</sup>, the two's complement and unsigne
 | `-2147483647-1U < 2147483647`  | unsigned | 0          |
 | `-2147483647-1 < -2147483647`  | signed   | 1          |
 | `-2147483647-1U < -2147483647` | unsigned | 1          |
+
+# Practice problem 2.22
+
+A. [1011] -> -8 + 0 + 2 + 1 = -5
+B. [11011] -> -16 + 8 + 0 + 2 + 1 = -5
+C. [111011] -> -32 + 16 + 8 + 0 + 2 + 1 = -5
+
+# Practice problem 2.23
+
+**A:**
+
+| **w**      | **fun1(w)** | **fun2(w)** |
+| ---------- | ----------- | ----------- |
+| 0x00000076 | 0x00000076  | 0xFFFFFF76  |
+| 0x87654321 | 0x00000021  | 0xFFFFFF21  |
+| 0x000000C9 | 0x000000C9  | 0xFFFFFFC9  |
+| 0xEDCBA987 | 0x00000087  | 0xFFFFFF87  |
+
+**B:**
+
+- func1 extracts the least significant byte, zero-extended
+- func2 extracts the least significant byte, sign-extended

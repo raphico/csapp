@@ -302,3 +302,16 @@ When casting between unsigned value and signed value (with the same word size), 
    - If one operand is unsigned, the signed one is implicitly casted to unsigned
    - This avoids negative numbers, but may be unexpected results
    - Example: `-1 < 0U   // -1 gets cast to unsigned → 4294967295U < 0U → false`
+
+### 2.2.6 Expanding the Bit Representation of a number
+
+1. Zero extension
+   - To convert an unsigned integer to a larger data type, just add leading zeros
+2. Sign extension
+   - To covert a two's complement integer to a larger data, just add copies of the MSB in the leading position
+3. Why sign extension works
+   - The MSB has a negative weight of -2<sup>w - 1</sup>
+   - When we extend, the added 1s contribute to the weight, but they cancel when combined with the original MSB
+4. Signed to unsigned conversion, plus promotion, can produce different result depending on the order
+   - When converting an signed short to an unsigned int, C first promotes the short to an int before casting to unsigned
+   - If we instead cast to int before promotion, we would get a different result
