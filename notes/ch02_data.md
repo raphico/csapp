@@ -82,13 +82,13 @@ Boolean algebra is a branch of mathematics that deals with variables having two 
 
 It matters because it gives precise, mathematical way to describe and manipulate logic, which provides the foundation for digital circuits, and programming, used to simplify digital circuits and design complex decision making processes
 
-A bit vector can represent a finite set, where each position in the vector corresponds to an element in the set {0, 1, ..., w - 1}. The rightmost bit is a<sub>0<sub>, the next is a<sub>1<sub>, and so on, up to a<sub>w - 1<sub> on the left. A bit value of 1 means the element is in the set, while a bit value of 0 means it is not. For example, given the bit vector:
+A bit vector can represent a finite set, where each position in the vector corresponds to an element in the set {0, 1, ..., w - 1}. The rightmost bit is a<sub>0</sub>, the next is a<sub>1</sub>, and so on, up to a<sub>w - 1</sub> on the left. A bit value of 1 means the element is in the set, while a bit value of 0 means it is not. For example, given the bit vector:
 
 a = [01101001]
 
-a<sub>0<sub> = 1, therefore element 0 is in the set
-a<sub>1<sub> = 0, therefore element 1 is not in the set
-a<sub>2<sub> = 0, therefore element 2 is not in the set
+a<sub>0</sub> = 1, therefore element 0 is in the set
+a<sub>1</sub> = 0, therefore element 1 is not in the set
+a<sub>2</sub> = 0, therefore element 2 is not in the set
 .
 .
 .
@@ -166,3 +166,92 @@ C rules:
 
 - `unsigned` -> right shift is always logical
 - `signed` -> implementation-dependent, but almost all systems use arithmetic shifts.
+
+# 2.2 Integer representations
+
+## 2.2.1 Integral Data types
+
+- Integral data types are types that represent finite ranges of integers
+- C integral types come in different sizes: char, short, int, long, long long
+- Each can be signed (default, allows negatives) or unsigned (only nonnegative)
+- The exact number of bytes depends on the machine and compiler, but the standard guarantees minimum ranges
+- On 32-bit machines, long is often 32-bits; on 64-bit machines long is often 8 bytes
+- Negative ranges go further than positive ranges (because of two's-complement representation)
+- long long (introduced in C99) guarantees at least 8-bytes, making it good for very large integers
+
+## 2.2.2 Unsigned Encodings
+
+In binary, each bit has a place value, meaning the position on the bit in the binary number determines its value. In binary, consisting of 4 bits:
+
+- the right most bit is worth 2<sup>0</sup> = 1
+- the next bit (bit 1) is worth 2<sup>1</sup> = 2
+- then bit 2 is worth 2<sup>2</sup> = 4
+- then bit 3 is worth 2<sup>3</sup> = 8
+
+If a bit is 1, it contributes its place value. If it's 0, it contributes nothing
+
+Given a bit vector x = [x<sub>3</sub>, x<sub>2</sub>, x<sub>2</sub>, x<sub>1</sub>, x<sub>1</sub>], its corresponding unsigned integer representation can be expressed as:
+
+- `w` = number of bits.
+- Each bit `xᵢ` is either `0` or `1`
+- Its contribution is `xᵢ · 2ⁱ`.
+- You add up all contributions for `i = 0` (rightmost) up to `w − 1` (leftmost).
+
+So:
+
+$$
+B2U_w(x) = \sum_{i=0}^{w-1} x_i \cdot 2^i
+$$
+
+Example for `w = 4`, `x = [1011]`:
+
+$$
+B2U_4([1011]) = 1·2³ + 0·2² + 1·2¹ + 1·2⁰ = 8 + 0 + 2 + 1 = 11
+$$
+
+- With w bits, the smallest unsigned integer is [0...0] = 0
+- The largest is [1...1] = 2<sup>w</sup> - 1
+- The B2U<sub>w</sub> maps bit vectors of length w to unsigned integers in the range [0, 2<sup>w</sup> - 1]
+- This mapping is bijection
+
+## 2.2.3 Two's complement encodings
+
+The (r - 1)'s complement and r's complement are mathematical construct (where r is the base, usually 2 for binary) primarily used in digital systems to:
+
+- simplify subtraction operations by converting it to addition: `A - B` = `A + (complement of B)`. This means hardware onl need adders, not separate subtractors
+- represent negative numbers by mapping certain large positive values to negative values
+
+- Two's complement is the standard way to represent signed integers in computers
+- It works by interpreting the most significant bit (MSB), also called the sign bit, to have negative weight:
+  - Instead of having weight of 2<sup>w - 1</sup> (like in signed representation), it has weight -2<sup>w - 1</sup>
+  - If its 0, the number is nonnegative
+  - If its 1, the number is negative
+- The formula is:
+
+$$
+B2T_w(x) = -x_{w-1} \cdot 2^{w-1} + \sum_{i=0}^{w-2} x_i \cdot 2^i
+$$
+
+- Example with 4-bit numbers:
+  - B2T<sub>4</sub>([0001]) = -0·2<sup>3</sup> + 0·2<sup>2</sup> + 0·2<sup>1</sup> + 1·2<sup>0</sup> = 0 + 0 + 0 + 1 = 1
+  - B2T<sub>4</sub>([0101]) = -0·2<sup>3</sup> + 1·2<sup>2</sup> + 0·2<sup>1</sup> + 1·2<sup>0</sup> = 0 + 4 + 0 + 1 = 5
+  - B2T<sub>4</sub>([1011]) = -1·2<sup>3</sup> + 0·2<sup>2</sup> + 1·2<sup>1</sup> + 1·2<sup>0</sup> = -8 + 0 + 2 + 1 = -5
+  - B2T<sub>4</sub>([1111]) = -1·2<sup>3</sup> + 1·2<sup>2</sup> + 1·2<sup>1</sup> + 1·2<sup>0</sup> = -8 + 4 + 2 + 1 = -1
+
+A w-bit number in two's complement representation has a representable range of:
+
+- The least representable value is given by [10...0] = -2<sup>w - 1</sup>
+- The largest representable value is given by [01...1] = 2<sup>w - 1</sup> - 1
+- Giving us a representable range of [-2<sup>w - 1</sup>, 2<sup>w - 1</sup> - 1]
+
+### Properties
+
+1. Asymmetric range
+   - Two's complement range is asymmetric: |TMIN| = |TMAX| + 1
+   - Reason: zero takes up a slot in the nonnegative side, making the negative range go further by 1
+2. Unsigned vs Signed
+   - The maximum unsigned value is (UMAX) is exactly twice the maximum two's-complement value plus 1: UMAX = 2TMAX + 1
+   - This is because the negative patterns in signed interpretation become large positive values when viewed unsigned
+3. Portability concerns
+   - C doesn't force compilers to use two's complement, but most machines do
+   - `<limits.h>` defines machine-specific ranges of different integer data types
