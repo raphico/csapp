@@ -255,3 +255,50 @@ A w-bit number in two's complement representation has a representable range of:
 3. Portability concerns
    - C doesn't force compilers to use two's complement, but most machines do
    - `<limits.h>` defines machine-specific ranges of different integer data types
+
+### 2.2.4 Conversions between Signed and Unsigned
+
+When casting between unsigned value and signed value (with the same word size), the bit pattern doesn't change, only the interpretation changes. For example, the 16-bit two's complement representation of -12,345 is `0xCFC7` in hex, when casting the -12,345 to an unsigned integer value, `0xCFC7` now reads 53191.
+
+- Negative numbers become large unsigned numbers
+- Large unsigned numbers beyond TMAX wrap into negative signed values
+- For values between 0 <= x <= 2<sup>w - 1</sup>, signed and two's complement representation match the same bit pattern (MSB = 0)
+- For other values, the interpretation depends on whether the MSB is treated as a sign bit or part of magnitude
+- Every negative number has a MSB of 1, so its unsigned interpretation is always the signed value plus 2<sup>w</sup>
+  $$
+  T2U(x) =
+  \begin{cases}
+  x & x \geq 0 \\
+  x + 2^w & x < 0
+  \end{cases}
+  $$
+- If the unsigned value is smaller 2<sup>w - 1</sup>, the MSB = 0, and the two's complement is identical. If the unsigned value is larger 2<sup>w - 1</sup>, then MSB = 1, AND the two's complement is unsigned value minus 2<sup>w</sup>
+  $$
+  U2T_w(u) =
+  \begin{cases}
+  u, & u < 2^{w-1} \\
+  u - 2^w, & u \geq 2^{w-1}
+  \end{cases}
+  $$
+
+### 2.2.5 Signed vs Unsigned C
+
+1. Signed vs unsigned in C
+   - C supports both signed and unsigned integers
+   - By default, constants like 12345 or 0x1A2B are signed
+   - Adding `u`/`U` suffix makes them unsigned
+   - C doesn't force machines/compilers to use two's complement representation, but almost all machines use two's complement
+2. Conversion between signed and unsigned
+   - Conversion doesn't change the bits, only how they're interpreted
+   - On a two's complement machine, for signed to unsigned, apply T2U<sub>w</sub>; for unsigned to signed, apply U2T<sub>w</sub>, where w is the number of bits for the data type
+   - Conversion can happen due to explicit cast or implicitly when an expression of one type is assigned to a variable of another
+3. Printing values
+   - printf specifiers:
+     - %d = signed decimal
+     - %u = unsigned decimal
+     - %x = hexadecimal
+   - printf doesn’t look at type info → it just prints the bits in the format you tell it.
+4. Mixed signed/unsigned expressions
+   - If one operand is unsigned, the signed one is implicitly casted to unsigned
+   - This avoids negative numbers, but may be unexpected results
+   - Example: `-1 < 0U   // -1 gets cast to unsigned → 4294967295U < 0U → false`

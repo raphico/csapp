@@ -301,3 +301,61 @@ So decimal = **–276**.
 ### M. `0x20`
 
 - Hex: `0x20` = $2·16 = 32$.
+
+# Practice problem 2.19
+
+| Hexadecimal | Binary  | B2U₄(x)                | B2T₄(x)                 |
+| ----------- | ------- | ---------------------- | ----------------------- |
+| 0xE         | \[1110] | 2³ + 2² + 2¹ = 14      | −2³ + 2² + 2¹ = −2      |
+| 0x0         | \[0000] | 0                      | 0                       |
+| 0x5         | \[0101] | 2² + 2⁰ = 5            | 2² + 2⁰ = 5             |
+| 0x8         | \[1000] | 2³ = 8                 | -2³ = -8                |
+| 0xD         | \[1101] | 2³ + 2² + 2⁰ = 13      | -2³ + 2² + 2⁰ = -3      |
+| 0xF         | \[1111] | 2³ + 2² + 2¹ + 2⁰ = 15 | -2³ + 2² + 2¹ + 2⁰ = -1 |
+
+| x   | T2U₄(x) |
+| --- | ------- |
+| -8  | 8       |
+| -3  | 13      |
+| -2  | 14      |
+| -1  | 15      |
+| 0   | 0       |
+| 5   | 5       |
+
+**1:**
+
+T2B₄(-8) = 1000
+B2U₄(1000) = 8
+
+**2:**
+
+T2B₄(-3) = 1101
+B2U₄(1101) = 8 + 4 + 1 = 13
+
+**3:**
+
+T2B₄(-2) = 1110
+B2U₄(1110) = 8 + 4 + 2 = 14
+
+**4:**
+
+T2B₄(-1) = 1111
+B2U₄(1111) = 8 + 4 + 2 + 1 = 15
+
+**4, 5:**
+
+For values between 0 <= x <= 2<sup>w - 1</sup>, the two's complement and unsigned representation are identical
+
+# Practice problem 2.20
+
+For values between 0 <= x <= 2<sup>w - 1</sup>, the two's complement and unsigned representation are identical. While for negative values, the unsigned interpretation is the signed value plus 2<sup>w</sup>
+
+# Practice problem 2.21
+
+| Expression                     | Type     | Evaluation |
+| ------------------------------ | -------- | ---------- |
+| `-2147483647-1 == 2147483648U` | unsigned | 1          |
+| `-2147483647-1 < 2147483647`   | signed   | 1          |
+| `-2147483647-1U < 2147483647`  | unsigned | 0          |
+| `-2147483647-1 < -2147483647`  | signed   | 1          |
+| `-2147483647-1U < -2147483647` | unsigned | 1          |
