@@ -333,4 +333,36 @@ Truncation means reducing a number from a wider word size (w bits) to a narrower
 
 ### 2.2.8 Advice on Signed vs Unsigned
 
-Implicit casting can lead subtle, non-intuitive behavior, especially when converting between signed and unsigned types. Because this conversion without any clear indication, it easy for programmers to overlook and introduce bugs. Unsigned integers in C often cause subtle bugs due to implicit signed–unsigned conversions, so many languages (like Java) avoid them entirely and use only two’s-complement signed integers. Still, unsigned types are useful when treating data as raw bits (e.g., flags, addresses) or when implementing modular and multiprecision arithmetic
+Implicit casting can lead subtle, unintuitive behavior, especially when converting between signed and unsigned types. Because this conversion happens without any clear indication, it easy for programmers to overlook and introduce bugs. Unsigned integers in C often cause subtle bugs due to implicit signed–unsigned conversions, so many languages (like Java) avoid them entirely and use only two’s-complement signed integers. Still, unsigned types are useful when treating data as raw bits (e.g., flags, addresses) or when implementing modular and multi-precision arithmetic
+
+# 2.3 Integer Arithmetic
+
+## 2.3.1 Unsigned Addition
+
+Arithmetic on fixed-size unsigned integers can overflow when the result exceeds the word size. For example, two w-bit unsigned integers can sum up to as much as 2<sup>w + 1</sup> - 2, which needs w + 1 bits. but, most programming languages use fixed precision arithmetic, meaning the higher bits are discarded and only lower bits are kept. This is equivalent to computing sum mod 2<sup>w</sup>:
+
+- if x + y < 2<sup>w</sup>; the result is exact
+- if x + y >= 2<sup>w</sup>; an overflow occurs and the result is (x + y) - 2<sup>w</sup>
+
+In C, an overflow isn't flagged as an error—it just wraps around the range. To detect an unsigned overflow, we can check whether the result is smaller than one of the operands
+
+### Additive inverse
+
+In a system of w-bit unsigned integers with modular arithmetic (+<sub>w</sub>), every element has an additive inverse: a value that when added mod 2<sup>w</sup> will yield 0.
+
+- if x = 0, its inverse is 0
+- if x > 0, its inverse is 2<sup>w</sup> - x
+
+Why? Because
+
+(x + 2<sup>w</sup> - x) mod 2<sup>w</sup> = 2<sup>w</sup> mod 2<sup>w</sup> = 0
+
+And 2<sup>w</sup> - x, always lies in the valid unsigned range [1, 2<sup>w</sup> - 1]
+
+$$
+-u_w x =
+\begin{cases}
+0 & x = 0 \\
+2^w - x & x > 0
+\end{cases}
+$$

@@ -407,3 +407,17 @@ strlen returns a size_t (an unsigned int). In the expression strlen(s) - strlen(
 **C:**
 
 Casting both values to an signed int `(int) strlen(s) - (int) strlen(t) > 0`
+
+# Practice problem 2.27
+
+[Solution](../code/ch02_problem_2.27.c)
+
+# Practice problem 2.28
+
+| Hex (x) | Decimal (x) | Decimal (additive inverse) | Hex (additive inverse) |
+| ------- | ----------- | -------------------------- | ---------------------- |
+| 0       | 0           | 0                          | 0                      |
+| 5       | 5           | 11                         | B                      |
+| 8       | 8           | 8                          | 8                      |
+| D       | 13          | 3                          | 3                      |
+| F       | 15          | 1                          | 1                      |
