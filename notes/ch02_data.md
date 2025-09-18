@@ -375,3 +375,15 @@ Two's complement arithmetic is just unsigned modular addition followed by reinte
 - positive overflow: s > 2<sup>w - 1</sup> - 1, the result wraps to negative numbers
 - no overflow, negative result: s >= -2<sup>w - 1</sup>
 - negative overflow: s < -2<sup>w - 1</sup>, the result wraps to positive numbers
+
+## 2.3.2 Two's complement negation
+
+In two'complement interpretation, every number has a unique additive inverse, but the special case -2<sup>w - 1</sup> is its own additive inverse because it doesn't have a positive counterpart
+
+$$
+-^t_w x =
+\begin{cases}
+-2^{w-1}, & x = -2^{w-1} \\
+-x, & x > -2^{w-1}
+\end{cases}
+$$
