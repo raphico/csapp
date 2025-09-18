@@ -421,3 +421,34 @@ Casting both values to an signed int `(int) strlen(s) - (int) strlen(t) > 0`
 | 8       | 8           | 8                          | 8                      |
 | D       | 13          | 3                          | 3                      |
 | F       | 15          | 1                          | 1                      |
+
+# Practice problem 2.29
+
+| **x** | **y** | **x + y** | **x +t₅ y** | **Case**                     |
+| ----- | ----- | --------- | ----------- | ---------------------------- |
+| 10100 | 10001 | -27       | 00101       | negative overflow            |
+| 11000 | 11000 | -16       | 10000       | no overflow, negative result |
+| 10111 | 01000 | -1        | 11111       | no overflow, negative result |
+| 00010 | 00101 | 7         | 00111       | no overflow, positive result |
+| 01100 | 00100 | 16        | 10000       | positive overflow            |
+
+# Practice problem 2.30
+
+[Solution](../code/ch02_problem_2.30.c)
+
+# Practice problem 2.31
+
+With 4-bit arithmetic:
+
+- lets say x = 7 and y = 3, sum = 10
+- but the representable range of 4-bit two's complement is -8 to 7
+- the result is truncated: 10 mod 16 = -6 (1010)
+
+- sum - x = -6 - 7 = -13. In 4-bit arithmetic: -13 mod 16 = 3. So it holds
+- sum - y = -6 - 3 = -9. In 4-bit arithmetic: -9 mod 16 = 3. So it also holds
+
+So the function returns 1, even when an overflow occurs
+
+# Practice problem 2.32
+
+The negative range goes further than the positive range by 1. So if y == TMIN, then y can't be represented (it wraps around to itself). So the bug happens when y = TMIN, regardless of x

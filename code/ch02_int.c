@@ -1,17 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 
-int fun1(unsigned word) {
-    return (int) ((word << 24) >> 24);
-}
+int fun1(unsigned word) { return (int)((word << 24) >> 24); }
 
-int fun2(unsigned word) {
-    return ((int) word << 24) >> 24;
-}
+int fun2(unsigned word) { return ((int)word << 24) >> 24; }
 
-int strlonger(char *s, char *t) {
-    return strlen(s) - strlen(t) > 0;
-}
+int strlonger(char *s, char *t) { return strlen(s) - strlen(t) > 0; }
 
 int main() {
     unsigned word = 0x00000076;

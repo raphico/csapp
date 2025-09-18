@@ -366,3 +366,12 @@ $$
 2^w - x & x > 0
 \end{cases}
 $$
+
+## 2.3.2 Two's complement addition
+
+Two's complement arithmetic is just unsigned modular addition followed by reinterpretation. The exact mathematical sum, z = x + y, might not fall within the representable range, so it's truncated to w-bits: z' = (x + y) mod 2<sup>w</sup>. Then the result is reinterpreted as a two's complement integer: z<sup>n</sup> = U2T<sub>w</sub>(z'). Overflow only happens when both operands have the same sign, but the result has a different sign. There are four cases that may arise during two's complement addition:
+
+- no overflow, positive result: s <= 2<sup>w - 1</sup> - 1
+- positive overflow: s > 2<sup>w - 1</sup> - 1, the result wraps to negative numbers
+- no overflow, negative result: s >= -2<sup>w - 1</sup>
+- negative overflow: s < -2<sup>w - 1</sup>, the result wraps to positive numbers
