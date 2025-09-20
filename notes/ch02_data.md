@@ -411,3 +411,61 @@ In other words:
 1. Multiply as if unsigned.
 2. Take the result modulo $2^w$ to get the lower w bits.
 3. Reinterpret the bits as a two’s-complement integer.
+
+## 2.3.6 Multiplying by constants
+
+Integer multiplication is slower than addition, subtraction, and shift operations. To optimize performance, compilers often replace multiplication by a constant with a combination of shifts, additions, and subtractions.
+
+For both unsigned and two's complement signed integers:
+
+$$
+x << k = (x \cdot 2^k) \bmod 2^w
+$$
+
+Shifting left by k bits is equivalent to multiplying by $2^k$, and if overflow occurs, the truncated result still matches the behavior of normal multiplication.
+
+When multiplying by a constant, the constant can be expressed as a sum or difference of powers of 2.
+
+For example:
+
+$$
+14 = 16 - 2 = 2^4 - 2^1
+$$
+
+So multiplication can be rewritten as:
+
+$$
+x \cdot 14 = (x << 4) - (x << 1)
+$$
+
+This replacement is faster because it uses only shifts and subtractions instead of a full multiply.
+
+Suppose we have a run of ones from position $n$ down to $m$. That run represents the value:
+
+$$
+2^n + 2^{n-1} + \dots + 2^m
+$$
+
+Multiply by $x$:
+
+#### **Form A (sum of shifts):**
+
+$$
+(x << n) + (x << (n-1)) + \dots + (x << m)
+$$
+
+#### **Form B (difference of two shifts):**
+
+Notice that
+
+$$
+2^n + 2^{n-1} + \dots + 2^m = 2^{n+1} - 2^m
+$$
+
+So,
+
+$$
+x \cdot (2^n + \dots + 2^m) = (x << (n+1)) - (x << m)
+$$
+
+This is often cheaper (fewer instructions).

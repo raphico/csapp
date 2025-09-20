@@ -564,3 +564,77 @@ Exit the function if the product exceeds `size_t`
 if (ele_cnt != 0 && ele_size > SIZE_MAX / ele_cnt) return NULL;
 ...
 ```
+
+# Practice problem 2.38
+
+So, LEA (Load Effective Instruction) can compute expressions in the form:
+
+$$
+(a << k) + b
+$$
+
+Where:
+
+- k = 0, 1, 2, 3. So a can be left shifted by 0-3 bits
+- b = 0 or b = a
+
+Shifting left by k is equivalent to multiplying by $2^k$:
+
+$$
+(a << k) + b = a \cdot 2^k + b
+$$
+
+Since b can be 0 or a, we have two cases:
+
+- b = 0, $a \cdot 2^k$
+- b = a $a \cdot 2^k + a = a \cdot (2^k + 1)$
+
+Case 1, b = 0:
+
+| k   | result = a \* 2^k |
+| --- | ----------------- |
+| 0   | a \* 1 = a        |
+| 1   | a \* 2            |
+| 2   | a \* 4            |
+| 3   | a \* 8            |
+
+Case 2, b = a:
+
+| k   | result = a\*(2^k + 1) |
+| --- | --------------------- |
+| 0   | a\*(1 + 1) = 2a       |
+| 1   | a\*(2 + 1) = 3a       |
+| 2   | a\*(4 + 1) = 5a       |
+| 3   | a\*(8 + 1) = 9a       |
+
+So multiples of a that can be computed with a single LEA instruction: `a, 2a, 3a, 4a, 5a, 8a, 9a`
+
+# Practice problem 2.39
+
+When n is the bit position of the MSB, n = w - 1
+
+$$
+(x << (n + 1)) - (x << m) = (x << (w - 1 + 1)) - (x << m)
+(x << w) - (x << m)
+$$
+
+Shifting a w bit pattern by w bit to the left will yield 0. So:
+
+$$
+(x << w) - (x << m) = 0 - (x << m) = -(x << m)
+$$
+
+# Practice problem 2.40
+
+| K   | shifts | Add/Subs | Expression              |
+| --- | ------ | -------- | ----------------------- |
+| 6   | 2      | 1        | (x << 3) - (x << 1)     |
+| 31  | 1      | 1        | (x << 5) - x            |
+| −6  | 2      | 1        | (x << 1) - (x << 3)     |
+| 55  | 2      | 2        | (x << 6) - (x << 3) - x |
+
+# Practice problem 2.41
+
+- If n = m, form A only requires one shift and no addition, while form B requires two shifts and 1 subtraction
+- If n = m + 1, form A and B require two shifts and one addition/subtraction
+- if n > m + 1, form A requires multiple shifts and additions, while form B requires two shifts and 1 subtraction
