@@ -387,3 +387,27 @@ $$
 -x, & x > -2^{w-1}
 \end{cases}
 $$
+
+## 2.3.4. Unsigned Multiplication
+
+When multiplying two w-bit unsigned integers, the exact product can be as large as (2<sup>w</sup> - 1)<sup>2</sup>, which may need up to 2w bits. but the hardware only keep lower w bits of the true mathematical product. This is equivalent to computing the product mod 2<sup>w</sup>:
+
+$$
+x *^{u}_{w} y = (x \cdot y) \bmod 2^w
+$$
+
+## 2.3.5 Two's complement multiplication
+
+Two's complement multiplication is just unsigned modular multiplication followed by reinterpretation. While the exact product of two w-bit two's complement numbers may require up to 2w bits, the hardware only keeps the lower w bits of the true mathematical product. The low-order w bits of the product is identical for both unsigned and two's complement multiplication.
+
+Formally, for w-bit numbers $x$ and $y$:
+
+$$
+x *^t_w y = U2T_w \big( (x \cdot y) \bmod 2^w \big)
+$$
+
+In other words:
+
+1. Multiply as if unsigned.
+2. Take the result modulo $2^w$ to get the lower w bits.
+3. Reinterpret the bits as a two’s-complement integer.
