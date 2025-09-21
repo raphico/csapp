@@ -655,3 +655,39 @@ An arithmetic right shift by k is equivalent to dividing by $2^k$:
 $$
 N = 2^3 = 8
 $$
+
+# Practice problem 2.44
+
+**A:**
+
+When $x = TMIN$, $x - 1$ wraps to TMAX; so, $x - 1 < 0$ evaluates to false instead of true
+
+**B:**
+
+The expression is always true because the first part $(x & 7) != 7$ evaluates to false when the lower 3 bits are 1s, which is when $x mod 8 = 7$ (x = 7, 15, 23, ...). But in those case left shifting by 29 moves the three ones to the top three positions, so the sign bit is set to 1. Thus, $(x << 29) < 0$ evaluates to true
+
+**C:**
+
+The expression is not always true. It fails for values of x ($\plusmn 46340$) where squaring overflows into the negative range.
+
+**D:**
+
+This expression is always true because the first part only evaluates to false when $x \geq 0$. But in that case, since every positive number has a negative counterpart $-x \leq 0$ evaluates to true
+
+**E:**
+
+This expression is not always true. It fails when $x = TMIN$, because $TMIN$ doesn't have a positive counterpart, it wraps back to itself. So $-x \geq 0$ evaluates to false when $x = TMIN$
+
+**F:**
+
+This is always true, because signed and unsigned addition produce the same bit pattern
+
+**G:**
+
+True:
+
+$$
+x * ~y = x * (-y - 1)
+ux * uy = x * y
+x * (-y - 1) + x * y = -xy - x + x * y = -x (y + 1 - y) = -x
+$$
