@@ -469,3 +469,32 @@ x \cdot (2^n + \dots + 2^m) = (x << (n+1)) - (x << m)
 $$
 
 This is often cheaper (fewer instructions).
+
+## 2.3.7 Dividing by powers of two
+
+1. **Unsigned Integers:**
+
+For unsigned integers, dividing by $2^k$ is equivalent to doing a logical right shift:
+
+$$
+x >> k = \lfloor x / 2^k \rfloor
+$$
+
+2. **Two's complement signed integers:**
+
+- For nonnegative numbers, arithmetic right shift is equivalent to dividing by $2^k$
+- For negative numbers, arithmetic right shift rounds down (-∞), but true C integer division rounds toward zero. For example:
+  - -7 / 2 = -3 (round toward zero)
+  - Arithmetic shift of -7 by 1 gives -4 (rounds down)
+  - So arithmetic right shift is not correct for negative numbers that don't divide evenly
+
+3. **Fixing the rounding problem:**
+
+- To correct this we can bias the number before shifting. So for division by $2^k$, the bias is $2^k - 1$
+- This is only applied for negative numbers
+
+So the formula is:
+
+```c
+(x < 0 ? x + (1 << k) - 1 : x) >> k
+```

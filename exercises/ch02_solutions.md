@@ -638,3 +638,20 @@ $$
 - If n = m, form A only requires one shift and no addition, while form B requires two shifts and 1 subtraction
 - If n = m + 1, form A and B require two shifts and one addition/subtraction
 - if n > m + 1, form A requires multiple shifts and additions, while form B requires two shifts and 1 subtraction
+
+# Practice problem 2.42
+
+[Solution](../code/ch02_problem_2.42.c)
+
+# Practice problem 2.43
+
+$$
+M \cdot x = x \cdot 32 - x
+M = 32 - 1 = 31
+$$
+
+An arithmetic right shift by k is equivalent to dividing by $2^k$:
+
+$$
+N = 2^3 = 8
+$$
