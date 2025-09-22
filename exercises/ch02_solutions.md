@@ -691,3 +691,47 @@ x * ~y = x * (-y - 1)
 ux * uy = x * y
 x * (-y - 1) + x * y = -xy - x + x * y = -x (y + 1 - y) = -x
 $$
+
+# Problem problem 2.45
+
+| Fractional value | Binary representation | Decimal representation |
+| ---------------- | --------------------- | ---------------------- |
+| $1/8$            | $0.001$               | $0.125$                |
+| $3/4$            | $0.11$                | $0.75$                 |
+| $25/16$          | $1.1001$              | $1.5625$               |
+| $43/16$          | $10.1011$             | $2.6975$               |
+| $9/8$            | $1.001$               | $2.125$                |
+| $47/8$           | $101.111$             | $5.875$                |
+| $51/16$          | $11.0011$             | $3.1875$               |
+
+# Practice problem 2.46
+
+**A. What is the binary representation of 0.1 − x?**
+
+$$
+0.1_{10} = 0.00011001100110011001100...
+$$
+
+$$
+0.1_{10} - x = 0.00011001100110011001100... - 0.00011001100110011001100 = 0.0000000000000000000000011001100...
+$$
+
+**B. What is the approximate decimal value of 0.1 − x?**
+
+The Tail `0.0000000000000000000000011001100...` exactly the same pattern of $0.1_{10}$, just shifted to the right by 20 bits:
+
+$$
+.1 \times 2^-20 = 9.5 \times 10^-8
+$$
+
+**C. The clock starts at 0 when the system is first powered up and keeps counting up from there. In this case, the system had been running for around 100 hours. What was the difference between the actual time and the time computed by the software?**
+
+$$
+9.5 \times 10^-8 \times * 100 * 60 * 60 = 0.34332275 seconds
+$$
+
+**D. The system predicts where an incoming missile will appear based on its velocity and the time of the last radar detection. Given that a Scud travels at around 2000 meters per second, how far off was its prediction?**
+
+$$
+0.34332275 \times 2000 \approx 687 meters
+$$

@@ -498,3 +498,19 @@ So the formula is:
 ```c
 (x < 0 ? x + (1 << k) - 1 : x) >> k
 ```
+
+# 2.4 Floating point
+
+Floating-point numbers let computers represent very small, very large, and fractional values in the form $V = x \times 2^y$, a base-2 version of the scientific notation. Before the 1980s, every computer manufacturer had its own way of representing and operating on floating-point numbers, often prioritizing speed and ease of implementation over accuracy. This led to inconsistencies and portability problems across systems. The situation changed in 1985 with introduction of the IEEE 754 standard. This standard unified the representation and operations of floating-point numbers, making results consistent across systems and greatly improving the reliability and portability of scientific and engineering software
+
+## 2.4.1 Fractional binary number
+
+Fractional binary numbers work like decimal fractions but use powers of 2 instead of 10. Digits to the left of the binary point represent positive powers of 2, while digits to the right of the binary point represent negative powers of 2.
+
+$$
+b = \sum_{i=-n}^{m} b_{i} \cdot 2^i
+$$
+
+Shifting the binary point one position to the left is equivalent to dividing by 2, and shifting right is equivalent to multiplying by 2.
+
+Because computers use a finite number of bits, not all fractions can be exactly represented. Only numbers that be written in the form $x \times 2^y$ are exact; others, like $1/5$ can only be approximated
