@@ -514,3 +514,124 @@ $$
 Shifting the binary point one position to the left is equivalent to dividing by 2, and shifting right is equivalent to multiplying by 2.
 
 Because computers use a finite number of bits, not all fractions can be exactly represented. Only numbers that be written in the form $x \times 2^y$ are exact; others, like $1/5$ can only be approximated
+
+## 2.4.2 IEEE floating-point representation
+
+The IEEE floating-point standard represents real numbers in a compact, scientific-notation style:
+
+$$
+V = (-1)^s \times M \times 2^E
+$$
+
+Where:
+
+- The sign $s$ determines whether the number is positive ($s = 0$) or negative ($s = 1$)
+- The significand (or Mantissa) $M$
+- The exponent $E$ tells how to shift the binary point
+
+The bit representation of a IEEE floating-point number is divided into three fields:
+
+- The sign bit s: 0 (positive), 1 (negative)
+- The k-bit exponent field: encodes the exponent E
+- The n-bit fraction field: encodes the significand (or mantissa) M
+
+Single-precision uses 32-bits (1 sign, 8 for exponent, 23 for fraction), while double-precision uses 64 bits (1 + 11 + 52)
+
+Depending on the encoded in the exponent field, the floating-point number can represent three categories of values:
+
+**1. Normalized values (the usual case)**
+
+This occurs when the exponent field is not all zeros and not all ones. In this case, the exponent field is interpreted to represent a signed integer in biased form. That's the exponent value $E$ is:
+
+$$
+E = e -  \text{Bias}, \quad \text{where Bias = } 127 \text{ (single) or } 1023 \text{ (double)} \text{ , and e = encoded field interpreted as an unsigned integer}
+$$
+
+The fraction field encodes the decimal part, like `.1011...`, f. For example, if the frac bits = `010...0`, then f = 0.25 (binary `0.01`). But for the actual significand, we pretend that there is a leading `1.` in front of the frac:
+
+$$
+M = 1 + f
+$$
+
+So if $f = 0.25$, then $M = 1 + 0.25 = 1.25$
+
+Why? Because like just like in decimal scientific notation, we rewrite the floating-point number so there's one digit before the binary point. In normalized values, the significand is always 1. Since it's guaranteed, we don't waste a storage bit for it (we assume it's just there)
+
+**2. Denormalized values**
+
+This occurs when the exponent field is all zeros. Here the significand doesn't have an implied leading 1. So:
+
+$$
+M = f, E = 1 - \text{Bias}
+$$
+
+Denormalized values are used:
+
+- To represent zero, since with normalized values $M = 1$, hence we can't represent 0 (all bits zero -> +0.0, sign bit 1 -> -0.0)
+- To represent values that are very close to zeros
+
+**3. Special values**
+
+This happens when the exponent field is all ones
+
+- if the fraction field is all zeros, then the resulting value represents either $+\infin$ or $-\infin$, depending on the sign bit
+- if the fraction field is all ones, then the resulting value represents **NaN** (Not a Number), typically returned by operations that don't return a real number or infinity (like $\sqrt{-1}$)
+
+## 2.4.3 Example numbers
+
+1. **Bias**:
+
+   - With $k$ exponent bits, the bias is $2^{k-1} - 1$.
+   - Example: if $k = 3$, bias = 3. If $k = 4$, bias = 7.
+   - This lets the exponent field (which is stored as unsigned) represent both negative and positive exponents.
+
+2. **Three regions of numbers**:
+
+   - **Denormalized values** (exp = all zeros): These are tiny numbers close to 0. The exponent is fixed to $1 - \text{Bias}$, and the significand doesn’t get an implied leading 1.
+   - **Normalized values** (exp is neither all zeros nor all ones): These are the usual floating-point numbers. The exponent is $e - \text{Bias}$, and the significand is $1 + f$ (with the implied leading 1).
+   - **Special values** (exp = all ones): If frac = 0 → Infinity. If frac ≠ 0 → NaN.
+
+3. **The example tables/figures** show how you compute the actual value:
+
+   - Take the stored exponent bits → compute $E$.
+   - Take the fraction bits → compute $M$.
+   - Multiply: $V = M \times 2^E$.
+
+4. **Spacing of representable numbers**:
+
+   - Near 0, denormalized numbers are packed tightly (like 0, 1/512, 2/512 …).
+   - As exponents get larger, numbers spread out (1.0, 1.125, 1.25 … all the way up to 240, then Infinity).
+   - This shows floating-point values are **not uniformly spaced** — small numbers have higher precision than very large numbers.
+
+5. **Cool trick**: If you just look at the bit patterns as if they were unsigned integers, they’re already ordered the same way as the floating-point numbers. That’s intentional — it makes comparison and sorting faster.
+
+**Values representation**
+
+1. +0.0
+   - representation: all bits are zero
+   - value: exactly 0
+2. smallest denormalized value
+   - exponent = all zeros, fraction = 000...01 (only the last bit is 0)
+   - $M = f = 2^-n$
+   - $E = -2^(k - 1) + 2 $
+   - $V = 2^{-n} \times 2^{-2^{k-1}+2}$
+   - In single precision $\approx 1.4 \times 10^-45$
+3. Largest denormalized
+   - exponent = all zeros, fraction = all ones
+   - $M = f = 1 - 2^-n$
+   - Exponent is still very negative
+   - So this is just slightly smaller than the smallest normalized number.
+4. Smallest normalized
+   - Exponent = 00...001 (only the last bit is 1)
+   - $M = 1$
+   - Value: $2^{-2^{k-1}+2}$.
+   - In single precision: $≈ 1.2 \times 10^{-38}$.
+5. Value 1.0
+   - Exponent chosen so that E = 0
+   - Mantissa = 1.0
+6. Largest normalized
+   - Sign = 0, exponent = max (but not all 1’s), fraction = all 1’s.
+   - Mantissa $M = 2 - 2^{-n}$.
+   - Exponent $E = 2^{k-1} - 1$.
+   - Value: $V = (2 - 2^{-n}) \times 2^{2^{k-1}-1}$.
+   - Enormous number, e.g. $≈ 3.4 \times 10^{38}$ for single precision.

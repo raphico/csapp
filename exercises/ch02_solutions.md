@@ -735,3 +735,79 @@ $$
 $$
 0.34332275 \times 2000 \approx 687 meters
 $$
+
+# Practice problem 2.47
+
+| Bits    | $e$ | $E$ | $2^E$ | $f$ | $M$ | $2^E × M$    | $V$ (Decimal) |
+| ------- | --- | --- | ----- | --- | --- | ------------ | ------------- |
+| 0 00 00 | 0   | 0   | 1     | 0/4 | 0/4 | 0/4          | 0.0           |
+| 0 00 01 | 0   | 0   | 1     | 1/4 | 1/4 | 1/4          | 0.25          |
+| 0 00 10 | 0   | 0   | 1     | 2/4 | 2/4 | 2/4          | 0.5           |
+| 0 00 11 | 0   | 0   | 1     | 3/4 | 3/4 | 3/4          | 0.75          |
+| 0 01 00 | 1   | 0   | 1     | 0/4 | 4/4 | 4/4          | 1.0           |
+| 0 01 01 | 1   | 0   | 1     | 1/4 | 5/4 | 5/4          | 1.25          |
+| 0 01 10 | 1   | 0   | 1     | 2/4 | 6/4 | 6/4          | 1.5           |
+| 0 01 11 | 1   | 0   | 1     | 3/4 | 7/4 | 7/4          | 1.75          |
+| 0 10 00 | 2   | 1   | 2     | 0/4 | 4/4 | 8/4          | 2.0           |
+| 0 10 01 | 2   | 1   | 2     | 1/4 | 5/4 | 10/4         | 2.5           |
+| 0 10 10 | 2   | 1   | 2     | 2/4 | 6/4 | 12/4         | 3.0           |
+| 0 10 11 | 2   | 1   | 2     | 3/4 | 7/4 | 14/4         | 3.5           |
+| 0 11 00 |     |     |       |     |     | +$\infin$    |               |
+| 0 11 01 |     |     |       |     |     | $\text{NaN}$ |               |
+| 0 11 10 |     |     |       |     |     | $\text{NaN}$ |               |
+| 0 11 11 |     |     |       |     |     | $\text{NaN}$ |               |
+
+# Practice problem 2.48
+
+1. The binary representation of $3510593$ is:
+
+$$
+1101011001000101000001
+$$
+
+2. Normalize it into the IEEE 754 form:
+
+$$
+(-1)^0 \times 1.101011001000101000001 \times 2^21
+$$
+
+3. Encode into 32-bit IEEE 754 format:
+
+1 + 8 + 23
+
+- sign bit: $0$
+- exponent field:
+  $$
+  E = e - bias
+  e = bias + E = 127 + 21 = 148
+  148 -> 10010100
+  $$
+- fraction field: $10101100100010100000100$
+
+$$
+01001010010101100100010100000100
+$$
+
+1. Convert to hex
+
+$$
+0100 1010 0101 0110 0100 0101 0000 0100
+
+0x4A564504
+$$
+
+# Practice problem 2.49
+
+**A. For a floating-point format with an n-bit fraction, give a formula for the smallest positive integer that cannot be represented exactly (because it would require an n+1-bit fraction to be exact). Assume the exponent field size k is large enough that the range of representable exponents does not provide a limitation for this problem.**
+
+The smallest non-representable integer has binary representation 1, followed n zeros, followed by 1:
+
+$$
+2^{1 + n} + 1
+$$
+
+**B. What is the numeric value of this integer for single-precision format (n = 23)?**
+
+$$
+2^{23 + 1} + 1 = 16777217
+$$
