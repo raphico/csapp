@@ -35,13 +35,18 @@ CSAPP/
 │   ├── ch03_solutions.md
 │   └── ...
 │
+├── homework/
+│   ├── ch02/
+│   ├── ch03/
+│   └── ...
+│
 └── README.md
 ```
 
 ## Progress Tracker
 
 - [x] Chapter 1: A Tour of Computer Systems
-- [ ] Chapter 2: Representing and Manipulating Information
+- [x] Chapter 2: Representing and Manipulating Information
 - [ ] Chapter 3: Machine-Level Representation of Programs
 - [ ] Chapter 4: Processor Architecture
 - [ ] Chapter 5: Optimizing Program Performance
