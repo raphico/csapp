@@ -653,3 +653,72 @@ Rounding upward or downward would introduce statistical bias in the computation 
 
 - In binary, even means the least significant bit is 0
 - An halfway case occurs when the part you are discarding is exactly `10000...` (a 1 followed by only 0s)
+
+## 2.4.5 Floating-point operations
+
+- Floating point is designed to approximate real arithmetic.
+- But you must remember: it breaks associativity and distributivity because of rounding and overflow.
+- That means programmers (and compilers) can’t casually rearrange or optimize floating-point expressions without risking different answers.
+
+## 2.4.6 Floating-point in C
+
+C provides two floating-point data types:
+
+- `float` → usually IEEE single precision (32-bit)
+- `double` → usually IEEE double precision (64-bit)
+
+- Most machines use IEEE-754, but C doesn't require it
+- Machines that use IEEE will use round-to-even as the default rounding mode
+- The C standard doesn't give you control to switch rounding modes directly
+- You also can’t portably ask for things like +∞ or NaN from plain C, because the standard doesn’t guarantee those features
+
+**How to get special values (system-dependent)**
+
+- Different systems provide their own libraries.
+- Example: in **gcc**, if you do
+
+```c
+#define _GNU_SOURCE 1
+#include <math.h>
+```
+
+you get constants like
+
+- `INFINITY` → represents $+\infty$
+- `NAN` → represents “Not a Number”
+
+**`long double` (the “third” type, C99 and later)**
+
+- Added in **C99**.
+- On some machines, `long double` is just the same as `double`.
+- On **Intel-compatible machines**, gcc makes `long double` an **80-bit extended precision format**, which:
+  - has more precision (extra bits in the significand),
+  - has a larger range of exponents,
+
+### Casting between integers and floating-point types in C
+
+1. Casting int → float
+
+   - A 32-bit `int` fits into the range 32-bit `float`. So no overflow occurs
+   - But float only has ~24 bits of precision
+   - If the integer needs more than 24 bits to represent exactly, it will be rounded
+
+2. Casting int or float → double
+
+   - `double` has more range and precision, so every 32-bit int can be represented exactly as a double
+   - Also every `float` can be promoted to double with no loss
+
+3. Casting double → float
+
+   - `float` as a smaller range and less precision
+   - Two possible issues:
+     - Overflow: a very large `double` becomes $+\infty$ or $-\infty$
+     - Rounding: loss in precision
+
+4. Casting float or double -> int
+
+   - The value is truncated toward zero (e.g. `1.9999 → 1`)
+   - If the float/double is outside the range of the integer type → overflow.
+     - The C standard doesn’t define exactly what happens.
+     - On Intel hardware, the CPU sets the result to a special “indefinite” value: the smallest possible int (TMin).
+     - Example: `(int) +1e10  // way too big for 32-bit int` gives -21483648 (a weird negative number).

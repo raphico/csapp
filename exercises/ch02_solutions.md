@@ -410,7 +410,12 @@ Casting both values to an signed int `(int) strlen(s) - (int) strlen(t) > 0`
 
 # Practice problem 2.27
 
-[Solution](../code/ch02_problem_2.27.c)
+```c
+int uadd_ok(unsigned x, unsigned y) {
+    unsigned s = x + y;
+    return s >= x ? 1 : 0;
+}
+```
 
 # Practice problem 2.28
 
@@ -434,7 +439,17 @@ Casting both values to an signed int `(int) strlen(s) - (int) strlen(t) > 0`
 
 # Practice problem 2.30
 
-[Solution](../code/ch02_problem_2.30.c)
+```c
+int tadd_ok(int x, int y) {
+    int sum = x + y;
+
+    if ((x > 0 && y > 0 && sum < 0) || (x < 0 && y < 0 && sum >= 0)) {
+        return 0;
+    }
+
+    return 1;
+}
+```
 
 # Practice problem 2.31
 
@@ -547,7 +562,15 @@ $$ q = y $$
 
 # Practice problem 2.36
 
-[Solution](../code/ch02_problem_2.36.c)
+```c
+#include <limits.h>
+
+int tmult_ok(int x, int y) {
+    long long p = (long long) x * y;
+
+    return p <= INT_MAX && p >= INT_MIN;
+}
+```
 
 # Practice problem 2.37
 
@@ -641,7 +664,12 @@ $$
 
 # Practice problem 2.42
 
-[Solution](../code/ch02_problem_2.42.c)
+```c
+int div16(int x) {
+    int bias = (x >> 31) & 0xF;
+    return (x + bias) >> 4;
+}
+```
 
 # Practice problem 2.43
 
@@ -911,3 +939,45 @@ $$
 | 010 1001      | 25/32          | 0110 100      | 3/4            |
 | 110 1111      | 31/2           | 1011 000      | 16             |
 | 000 0001      | 1/64           | 0001 000      | 1/64           |
+
+# Practice problem 2.53
+
+```c
+#define POS_INFINITY 1.8e308 * 2
+#define NEG_INFINITY -POS_INFINITY
+#define NEG_ZERO (-1.0 / POS_INFINITY)
+```
+
+# Practice problem 2.54
+
+**A. x == (int)(double) x**
+
+This is always true, because the range of 32-bit `int` values is fully represented in a `double` without loss of precision. Casting `int` to `double` and then back to `int` recovers the exact original value of `x`
+
+**B. x == (int)(float) x**
+
+This is not always true. An `int` can require more than 24-bits of precision, but a `float` only has about 24-bits of precision, so it will be rounded. For example, `8388680`
+
+**C. d == (double)(float) d**
+
+This is not always true. `float` has a smaller range and precision than `double`. So a very large double can be rounded to $+\infty$ or $-\infty$, leading to loss in precision. For example, $d = 3 \times 10^40$, as a counterexample, rounds to $+\infty$, and casting back to double keeps it $+\infty$
+
+**D. f == (float)(double) f**
+
+This is always true, because the range of `float` values is fully represented in a `double` without loss of precision. So casting `float` to `double` and then back to `float` recovers the original value of `f`
+
+**E. f == -(-f)**
+
+This is always true. `-f` just flips the sign bit, and -(-f) flips the sign bit back
+
+**F. 1.0/2 == 1/2.0**
+
+This is always. the numerator and denominator will be converted to floating-point representation before the division is performed
+
+**G. d\*d >= 0.0**
+
+This is always true
+
+**H. (f+d)-f == d**
+
+This is not always true. If `f` is much larger than `d`, `(f + d)` will round to f, so the subtraction won't recover the lost `d`. For example, $f = 1e20$ and $d = 1$, $f + d = 1e20$, and $(f + d) - f = 0.0$
