@@ -811,3 +811,103 @@ $$
 $$
 2^{23 + 1} + 1 = 16777217
 $$
+
+# Practice problem 2.50
+
+**A. 10.010<sub>2</sub>**
+
+$$
+10.010_{2} = 2.25
+$$
+
+Rounding to the nearest half (.5). The halves around it are 2.0 (10.0<sub>2</sub>) and 2.5 (10.1<sub>2</sub>).
+
+- Distance to 2.0: $2.25 - 2.0 = 0.25$
+- Distance to 2.5: $2.5 - 2.25 = 0.25$
+
+So its exactly halfway, so we pick the one whose last fractional bit is even (0), which is 2.0
+
+**B. 10.011<sub>2</sub>**
+
+$$
+10.011_{2} = 2.375
+$$
+
+The halves around 2.375 are 2.0 (10.0<sub>2</sub>) and 2.5 (10.1<sub>2</sub>)
+
+- Distance to 2.0: $2.375 - 2.0 = 0.375$
+- Distance to 2.5: $2.5 - 2.375 = 0.125$
+
+since $0.125 < 0.375$, 2.375 is closer to 2.5. So we round to 2.5
+
+**C. 10.110<sub>2</sub>**
+
+$$
+10.110_{2} = 2.75
+$$
+
+The halves around 2.75 are 2.5 (10.1<sub>2</sub>) and 3.0 (11.0<sub>2</sub>)
+
+- Distances to 2.75: $2.75 - 2.5 = 0.25$
+- Distances to 3.0: $3.0 - 2.75 = 0.25$
+
+So its exactly halfway, so we pick the one whose last fractional bit is even (0), which is 3.0
+
+**D. 11.001<sub>2</sub>**
+
+$$
+11.001_{2} = 3.125
+$$
+
+The halves around 3.125 are 3.0 (11.0<sub>2</sub>) and 3.5 (11.1<sub>2</sub>)
+
+- Distances to 3.0: $3.125 - 3.0 = 0.125$
+- Distances to 3.5: $3.5 - 3.125 = 0.375$
+
+Since $0.125 < 0.375$, 3.0 is closer to 3.125. So we round to 3.0
+
+# Practice problem 2.51
+
+**A. What is the binary representation of x'**
+
+$$
+0.1 = 0.0001100110011001100110011\dots_{2}
+$$
+
+We are keeping only the first 23 fractional bits. And since the 24th bit was a 1, and the remaining bits were not all zeros, the number is not exactly halfway between the rounding candidates, so it is rounded up:
+
+To round up, you add 1 to the last kept bit (the 23rd fractional bit):
+
+$$
+x' = 0.00011001100110011001101_{2}
+$$
+
+**B. What is the approximate decimal value of x' − 0.1?**
+
+When we rounded we added 1 to the 23rd fractional bit:
+
+$$
+x' - 0.1 \approx = 2^-24 = 2.38 \times 10^-8
+$$
+
+**C. How far off would the computed clock have been after 100 hours of operation?**
+
+$$
+2.38 \times 10^-8 \times 100 \times 60 \times 60 = 0.00857 seconds
+$$
+
+**D. How far off would the program’s prediction of the position of the Scud missile have been?**
+
+$$
+0.00857 \times 2000 = 17.1 meters
+$$
+
+# Practice problem 2.52
+
+| Format A Bits | Format A Value | Format B Bits | Format B Value |
+| ------------- | -------------- | ------------- | -------------- |
+| 011 0000      | 1              | 0111 000      | 1              |
+| 101 1110      | 15/2           | 1001 111      | 15/2           |
+| 010 1001      | 25/32          | 0110 100      | 3/4            |
+| 110 1111      | 31/2           | 1011 000      | 16             |
+| 000 0001      | 1/64           | 0001 000      | 1/64           |

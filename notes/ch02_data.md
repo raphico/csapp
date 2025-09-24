@@ -635,3 +635,21 @@ This happens when the exponent field is all ones
    - Exponent $E = 2^{k-1} - 1$.
    - Value: $V = (2 - 2^{-n}) \times 2^{2^{k-1}-1}$.
    - Enormous number, e.g. $≈ 3.4 \times 10^{38}$ for single precision.
+
+## 2.4.4 Rounding
+
+Because floating-point representations have limited range and precision, most real numbers can't be represented exactly. Instead, they must be approximated by rounding the nearest representable value. The IEEE 754 standard defines four rounding modes (the default mode finds the nearest representable value, while other modes compute lower and upper bounds):
+
+1. Round-to-even (default mode): rounds to the nearest representable value. If the number is exactly halfway between two candidates, it chooses the one whose least significant bit is even
+2. Round-toward-zero: rounds positive numbers downward and negative numbers upwards, giving a value $\hat{x}$ such that $|\hat{x}| \leq |x|$
+3. Round-down: rounds both positive and negative numbers downward, giving a value $x^-$ such that $x^- \leq x$
+4. Round-up: rounds both positive and negative numbers upward, giving a value $x^+$ such that $x \leq x^+$
+
+**Why round-to-even?**
+
+Rounding upward or downward would introduce statistical bias in the computation of averages (rounded values would be slightly lower or higher than the average of the numbers themselves). Round-to-even avoids statistical bias: it rounds upward 50% of the time and downward 50% of the time
+
+**Binary patterns:**
+
+- In binary, even means the least significant bit is 0
+- An halfway case occurs when the part you are discarding is exactly `10000...` (a 1 followed by only 0s)
