@@ -119,25 +119,30 @@ Machine instructions perform very simple, low-level operations—like adding the
 
 ## 3.2.2 Code example
 
-- Each line of assembly correspond to a single CPU instruction
-- What the CPU actually runs is not the assembly text, but a sequence of bytes that encodes those instructions
-- The CPU has no knowledge of the original C source: it just executes the byte-coded instructions defined by the ISA
-- To inspect machine-codes, we use disassemblers (e.g. `objdump`), which decode the byte sequence back into assembly-like form
-- IA32 instructions vary in length (1-15 bytes). The encoding is compact for common/simple instructions and longer for rare/complex ones
-- Each instruction encoding is unambiguous: given a starting byte, there's exactly one way to decode it
-- Disassemblers work purely on binary encoding: it doesn't need access to source or compiler output
-- Instruction naming can differ slightly (e.g. `push` vs `pushl`) but still have the same meaning
-- To produce an executable, the linker combines object files, resolves references to functions and variables across them (assigns real addresses to global variables and functions), and outputs a single program
-- The resulting executable is larger, because it also contains information used to start and terminate the program, and interact with the operating system
+- Each line of assembly corresponds to a CPU instruction.
+- What the CPU actually executes is not assembly text, but a sequence of bytes—the machine code encoding of those instructions.
+- The CPU has no knowledge of the original C source; it only follows the byte-coded instructions defined by the ISA.
+- Machine code can be inspected with disassemblers (e.g., objdump), which decode the byte sequence back into assembly-like mnemonics.
+- IA-32 instructions vary in length (1–15 bytes). Common/simple operations use compact encodings, while rare/complex ones require more bytes.
+- Instruction encodings are unambiguous: starting from any byte, there is exactly one valid decoding.
+- Disassemblers rely purely on binary encoding; they don’t need the original source or assembly text.
+- Instruction names may differ slightly (e.g., push vs. pushl) but still represent the same operation.
+- To produce an executable, the linker merges multiple object files (from your code and libraries), resolves references to functions and variables, assigns addresses, and outputs a single program.
+- Executables are larger than individual object files because they also contain startup, shutdown, and OS-interaction information.
 
 ## 3.2.3 Notes on formatting
 
-Compiler-generated assembly is often hard to read: it includes many directives (lines starting with `.`) meant for the assembler and linker, not the programmer, and it lacks comments about what instructions actually do. To make it clearer, we can:
+Compiler-generated assembly can be hard to read. It often contains:
 
-- Ignore most directives, and focus on instructions, which directly correspond to CPU actions
-- add comments, explaining in plain language how each instruction maps to the original C code
+- Directives (lines starting with `.`) for the assembler and linker, not the programmer
+- Lacks comments that explain how instructions map to the original C source
 
-This annotated style is closer to how human assembly programmers actually write and reason about code.
+To make it clearer, we can:
+
+- Ignore most directives, and focus on the instructions, which correspond directly to CPU actions
+- Add comments that explain how instructions maps back to the original C source
+
+This makes the assembly code look similar to how assembly programmers write and reason about code
 
 # 3.3 Data formats
 
@@ -174,7 +179,7 @@ There’s no confusion because floating point ops use their own instruction set 
 
 # 3.4 Accessing information
 
-An IA32 CPU has 8 32-bit registers: six general-purpose (%eax, %ecx, %edx, %ebx, %esi, %edi) registers and two for stack management (%esp, %ebp). For backwards compatibility the low-order 16 bits of all registers and the low-order 8 bits of the first four can be accessed independently, while the stack registers follow strict convention.
+An IA32 CPU has 8 32-bit registers: six general-purpose (%eax, %ecx, %edx, %ebx, %esi, %edi) registers and two for stack management (%esp, %ebp). For backwards compatibility the low-order 16 bits of all registers and the low-order 8 bits of the first four can be accessed independently, while the stack registers follow strict conventions for function calls, stack frames, and local variable access.
 
 IA32 instructions operate on operands, which specify the source of data or the destination for results:
 
@@ -194,5 +199,12 @@ The effective address is computed as:
 ```
 Addr = Imm + R[Eb] + R[Ei] * s
 ```
+
+Examples:
+
+- `(%eax)` → `M[R[%eax]]`
+- `(%eax, %ebx)` → `M[R[%eax] + R[%ebx]]`
+- `Imm(%eax)` → `M[Imm + R[%eax]]`
+- `Imm(%eax,%ebx,s)` → `M[Imm + R[%eax] + R[%ebx] \times s]`
 
 Simpler forms are just special cases where some components are omitted. These modes are especially useful for accessing arrays and struct elements efficiently.
