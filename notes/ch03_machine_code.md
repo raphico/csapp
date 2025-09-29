@@ -223,3 +223,10 @@ The stack is a last-in, first-out (LIFO) structure used primarily to manage proc
 - Push (`pushl`): decrements the stack pointer by 4 (for a double word) and stores the value at the new top. It's equivalent to `subl $4,%esp`, followed by `movl src,(%esp)`, but encoded more compactly (1 byte instead of 6 bytes)
 - Pop (`popl`): reads the value at the stack pointer into the destination, then increments the stack pointer by 4. The popped value remains in memory, until overwritten, but is no longer considered part of the stack
 - Since the stack shares the same memory space as code and data, values deeper in the stack can also be accessed with normal memory addressing (e.g. mov `4(%esp),%edx`)
+
+In IA32 assembly, dereferencing a pointer involves two steps:
+
+- load the pointer's value (the memory address it holds) from the stack into a register
+- Use that register as the effective address to read or write the actual value in memory
+
+Local variables are often stored in registers rather memory, since register access is much faster than memory access

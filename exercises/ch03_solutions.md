@@ -51,3 +51,39 @@ The destination operand has incorrect size
 **7 movb %si, 8(%ebp)**
 
 Only 8-bit registers can be used for byte operations
+
+# Practice problem 3.4
+
+| src_t         | dest_t        | Instruction        |
+| ------------- | ------------- | ------------------ |
+| int           | int           | movl %eax, (%edx)  |
+| char          | int           | movsbl %al, (%edx) |
+| char          | unsigned      | movsbl %al, (%edx) |
+| unsigned char | int           | movzbl %al, (%edx) |
+| int           | char          | movb %al, (%edx)   |
+| unsigned      | unsigned char | movb %al, (%edx)   |
+| unsigned      | int           | movl %eax, (%edx)  |
+
+# Practice problem 3.5
+
+1 movl 8(%ebp), %edi Get xp
+2 movl 12(%ebp), %edx Get yp
+3 movl 16(%ebp), %ecx Get zp
+4 movl (%edx), %ebx Get y at yp
+5 movl (%ecx), %esi Get z at zp
+6 movl (%edi), %eax Get x at xp
+7 movl %eax, (%edx) store x at yp
+8 movl %ebx, (%ecx) store y at zp
+9 movl %esi, (%edi) store z at xp
+
+```c
+void decode1(int *xp, int *yp, int *zp) {
+    int x = *xp
+    int y = *yp;
+    int z = *zp
+
+    *yp = x;
+    *zp = y;
+    *xp = z;
+}
+```
