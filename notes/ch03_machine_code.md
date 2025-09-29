@@ -205,6 +205,21 @@ Examples:
 - `(%eax)` → `M[R[%eax]]`
 - `(%eax, %ebx)` → `M[R[%eax] + R[%ebx]]`
 - `Imm(%eax)` → `M[Imm + R[%eax]]`
-- `Imm(%eax,%ebx,s)` → `M[Imm + R[%eax] + R[%ebx] \times s]`
+- `Imm(%eax,%ebx,s)` → `M[Imm + R[%eax] + R[%ebx] * s]`
 
 Simpler forms are just special cases where some components are omitted. These modes are especially useful for accessing arrays and struct elements efficiently.
+
+## 3.4.2 Data movement instructions
+
+Data movement is a core operation in IA32, and operand notation make these instructions flexible. Instructions are grouped into classes, where each class does the same operation, but on different operand size. For example, the `mov` class has `movb`, `movw`, and `movl` which copy 1-, 2-, 4- bytes values respectively to their destinations.
+
+Instructions in the `mov` class require two operands: a source (immediate, register, memory) and a destination (register, memory). They can't copy directly between two memory locations, so memory-to-memory moves require two steps, via a register. Variants like `movz` and `movs` handle copying smaller values into larger destinations, using sign-extension or zero-extension to fill upper bits
+
+> IA32 forbids memory-to-memory `mov` because allowing two memory operands would force the CPU to compute two effective addresses and perform to memory access in a single instruction, which complicates pipeline and slows execution since memory is far slower than registers
+> Register-to-register `mov` is allowed because both operands are already in the CPU, so data movement happens really fast without waiting on memory, making it cheap and efficient
+
+The stack is a last-in, first-out (LIFO) structure used primarily to manage procedure calls. In IA32, the stack is stored in memory and grows downward, so the top element has the lowest address. The stack pointer (`%esp`) always holds the address of the current top.
+
+- Push (`pushl`): decrements the stack pointer by 4 (for a double word) and stores the value at the new top. It's equivalent to `subl $4,%esp`, followed by `movl src,(%esp)`, but encoded more compactly (1 byte instead of 6 bytes)
+- Pop (`popl`): reads the value at the stack pointer into the destination, then increments the stack pointer by 4. The popped value remains in memory, until overwritten, but is no longer considered part of the stack
+- Since the stack shares the same memory space as code and data, values deeper in the stack can also be accessed with normal memory addressing (e.g. mov `4(%esp),%edx`)
