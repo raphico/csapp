@@ -87,3 +87,25 @@ void decode1(int *xp, int *yp, int *zp) {
     *xp = z;
 }
 ```
+
+# Practice problem 3.6
+
+| Instruction                 | Result       |
+| --------------------------- | ------------ |
+| `leal 6(%eax), %edx`        | $6 + x$      |
+| `leal (%eax,%ecx), %edx`    | $x + y$      |
+| `leal (%eax,%ecx,4), %edx`  | $x + 4y$     |
+| `leal 7(%eax,%eax,8), %edx` | $7 + 9x$     |
+| `leal 0xA(,%ecx,4), %edx`   | $10 + 4y$    |
+| `leal 9(%eax,%ecx,2), %edx` | $9 + x + 2y$ |
+
+# Practice problem 3.7
+
+| Instruction               | Destination | Value |
+| ------------------------- | ----------- | ----- |
+| `addl %ecx,(%eax)`        | 0x100       | 0x100 |
+| `subl %edx,4(%eax)`       | 0x104       | 0xA8  |
+| `imull $16,(%eax,%edx,4)` | 0x10C       | 0x110 |
+| `incl 8(%eax)`            | 0x108       | 0x14  |
+| `decl %ecx`               | %ecx        | 0x0   |
+| `subl %edx,%eax`          | %eax        | 0xFD  |

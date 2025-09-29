@@ -230,3 +230,17 @@ In IA32 assembly, dereferencing a pointer involves two steps:
 - Use that register as the effective address to read or write the actual value in memory
 
 Local variables are often stored in registers rather memory, since register access is much faster than memory access
+
+# 3.5 Arithmetic and Logical operations
+
+IA32 assembly organizes arithmetic and logic instructions into four categories: load effective address, unary, binary, and shifts. Each class has size-specific variants—`b` (byte), `w` (word), `l` (double word)—to indicate the operand, with the exception of `leal`, which exists only in double word form. Unary instructions operate on a single operand, while binary instructions require two operands
+
+## 3.5.1 Load effective address
+
+The `leal` instruction computes an effective address expression (base + index \* scale + displacement) and stores the result in a register (not memory). It’s commonly used for pointer arithmetic and as a compact way to express integer arithmetic
+
+## 3.5.2 Unary and binary operations
+
+Unary instructions operates on a single operand, which can either be an address or a register or a memory location, and this operand serves as both the source and the destination. For example: `incl (%esp)` increments the 4-byte value at the top of the stack.
+
+Binary instructions operate on two operands. The first operand can be an immediate, a register, or a memory location. While the second operand can either be a register or a memory location, but never a memory location when the first operand is also a memory. The second operand serves as both a source and the destination. For example: `subl %eax, %edx` $=$ `%edx = %eax - %edx`
