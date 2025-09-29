@@ -244,3 +244,17 @@ The `leal` instruction computes an effective address expression (base + index \*
 Unary instructions operates on a single operand, which can either be an address or a register or a memory location, and this operand serves as both the source and the destination. For example: `incl (%esp)` increments the 4-byte value at the top of the stack.
 
 Binary instructions operate on two operands. The first operand can be an immediate, a register, or a memory location. While the second operand can either be a register or a memory location, but never a memory location when the first operand is also a memory. The second operand serves as both a source and the destination. For example: `subl %eax, %edx` $=$ `%edx = %eax - %edx`
+
+## 3.5.3 Shift operations
+
+Shift instructions require two operands:
+
+1. shift amount: either an 8-bit immediate (0 - 31) or the %cl register. Only %cl is allowed as a register for the shift amount
+2. value to shift: can be a register or a memory location
+
+- left shifts: shl and sal are identical; they shift left and fill the least-significant bits with zeros
+- right shifts:
+  - sar = arithmetic right shift; fills the most-significant bits with the sign bit
+  - shr = logical right shift; fills the most-significant bits with zeros
+
+> Notes: the CPU only looks at the low-order 5 bits of the shift amount, because a 32-bit value can only be shifted 0-31 positions, anything else will be meaningless

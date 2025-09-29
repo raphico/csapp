@@ -109,3 +109,10 @@ void decode1(int *xp, int *yp, int *zp) {
 | `incl 8(%eax)`            | 0x108       | 0x14  |
 | `decl %ecx`               | %ecx        | 0x0   |
 | `subl %edx,%eax`          | %eax        | 0xFD  |
+
+# Practice problem 3.8
+
+1 movl 8(%ebp), %eax Get x
+2 shll $2, %eax x <<= 2
+3 movl 12(%ebp), %ecx Get n
+4 sarl %cl, %eax x >>= n
