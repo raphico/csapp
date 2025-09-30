@@ -145,3 +145,42 @@ $X ^ X = 0$, so `xorl %edx,%edx` sets all bits of `%edx` to zero
 **C. Compare the number of bytes to encode these two different implementations of the same operation.**
 
 xor instruction is encoded more compactly
+
+# Practice problem 3.11
+
+1 movl 8(%ebp) %eax
+2 xorl %edx, %edx
+3 divl 12(%ebp)
+4 movl %eax, 4(%esp)
+5 movl %edx, (%esp)
+
+# Practice problem 3.12
+
+**A. What data type is num_t?**
+
+Because GCC uses both 16(%ebp) and 20(%ebp), y spans 64 bits, and the multiplication is done with `mull`. So it must be `unsigned long long`
+
+**B. Describe the algorithm used to compute the product and argue that it is correct.**
+
+1 movl 12(%ebp), %eax Get x
+2 movl 20(%ebp), %ecx Get y_h
+3 imull %eax, %ecx Compute s = x*y_h
+4 mull 16(%ebp) Compute t = x*y_l
+5 leal (%ecx,%edx), %edx Add s to t_h
+6 movl 8(%ebp), %ecx Get dest
+7 movl %eax, (%ecx) Store t_l
+8 movl %edx, 4(%ecx) Store s+t_h
+
+We are computing:
+
+$$
+dest = (\text{unsigned 32-bit } x) \times (\text{unsigned 64-bit } y)
+$$
+
+$$
+y = y_h \cdot 2^32 + y_l
+$$
+
+$$
+x \cdot y = x \cdot y_h \cdot 2^32 + x \cdot y_l
+$$

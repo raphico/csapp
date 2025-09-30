@@ -262,3 +262,11 @@ Shift instructions require two operands:
 ## 3.5.4 Discussion
 
 The compiler optimizes arithmetic by reusing registers and substituting faster instructions, while preserving the overall result
+
+## 3.5.5 Special arithmetic operations
+
+Regular `imul` only produces a 32-bit product, but IA32 assembly provides special one-operand multiply and divide instructions that use the `%edx:%eax` register pair as a 64-bit value.
+
+In multiplication, `%edx` holds the high-order 32 bits and `%eax` holds the low-order 32-bits of the product.
+
+In division, `%edx:%eax` stores the dividend. For signed division, the high-order bits in `%edx` must be filled by sign-extending `%eax` using the cltd instruction. While for unsigned division, `%edx` is filled with zeros. The divisor is given as the operand, and the result is split with the quotient in `%eax` and the remainder in `%edx`
