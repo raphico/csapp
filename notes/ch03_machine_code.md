@@ -258,3 +258,7 @@ Shift instructions require two operands:
   - shr = logical right shift; fills the most-significant bits with zeros
 
 > Notes: the CPU only looks at the low-order 5 bits of the shift amount, because a 32-bit value can only be shifted 0-31 positions, anything else will be meaningless
+
+## 3.5.4 Discussion
+
+The compiler optimizes arithmetic by reusing registers and substituting faster instructions, while preserving the overall result

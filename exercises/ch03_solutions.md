@@ -116,3 +116,32 @@ void decode1(int *xp, int *yp, int *zp) {
 2 shll $2, %eax x <<= 2
 3 movl 12(%ebp), %ecx Get n
 4 sarl %cl, %eax x >>= n
+
+# Practice problem 3.9
+
+```c
+int arith(int x,
+          int y,
+          int z)
+{
+    int t1 = x ^ y;
+    int t2 = t1 >> 3;
+    int t3 = ~t2;
+    int t4 = t3 - z;
+    return t4;
+}
+```
+
+# Practice problem 3.10
+
+**A. Explain the effect of this particular Exclusive-Or instruction and what useful operation it implements.**
+
+$X ^ X = 0$, so `xorl %edx,%edx` sets all bits of `%edx` to zero
+
+**B. What would be the more straightforward way to express this operation in assembly code?**
+
+`movl $0, %edx`
+
+**C. Compare the number of bytes to encode these two different implementations of the same operation.**
+
+xor instruction is encoded more compactly
