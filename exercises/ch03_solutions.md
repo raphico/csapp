@@ -184,3 +184,60 @@ $$
 $$
 x \cdot y = x \cdot y_h \cdot 2^32 + x \cdot y_l
 $$
+
+# Practice problem 3.13
+
+**A:**
+
+`cmpl` means 32-bit comparison. So `data_t` is either: `int` or `unsigned int`. `setl` is signed less than condition (it uses $SF$ ^ $OF$). That boils down `data_t` to `int`, and COMP is `<`
+
+**B:**
+
+The suffix 'w' indicates 16-bit operands, while the comparison is for a two's complement $>=$; therefore, we can infer that:
+
+- `data_t` = `short`
+- `COMP` = $>=$
+
+**C:**
+
+The suffix 'b' indicates 8-bit operands, while `setb` is for a unsigned $<$; therefore, we can infer that:
+
+- `data_t` = `unsigned char`
+- `COMP` = $<$
+
+**D:**
+
+The suffix 'l' indicates 32-bit operands, while `setne` is for $!=$, which is the same for both unsigned and signed values; therefore, we can infer that:
+
+- `data_t` is either `int`, `unsigned`, or pointers
+- `COMP` = $!=$
+
+# Practice problem 3.14
+
+**A:**
+
+The suffix 'l' indicates 32-bit operands, while `setne` is for $!=$, which is the same for both unsigned and signed values; therefore, we can infer that:
+
+- `data_t` is either `int`, `unsigned`, or pointers
+- `TEST` = $!=$
+
+**B:**
+
+The suffix 'w' indicates 16-bit operands, while `sete` is for $==$, which is the same for both unsigned and signed values; therefore, we can infer that:
+
+- `data_t` is either `short` or `unsigned short`
+- `TEST` = $==$
+
+**C:**
+
+The suffix 'b' indicates 8-bit operands, while `setg` is for a two's complement $>=$; therefore, we can infer that:
+
+- `data_t` = `char`
+- `TEST` = $>$
+
+**D:**
+
+The suffix 'w' indicates 16-bit operands, while `seta` means $>$ in unsigned comparison; therefore, we can infer that:
+
+- `data_t` = `unsigned short`
+- `TEST` = $>$

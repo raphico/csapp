@@ -270,3 +270,48 @@ Regular `imul` only produces a 32-bit product, but IA32 assembly provides specia
 In multiplication, `%edx` holds the high-order 32 bits and `%eax` holds the low-order 32-bits of the product.
 
 In division, `%edx:%eax` stores the dividend. For signed division, the high-order bits in `%edx` must be filled by sign-extending `%eax` using the cltd instruction. While for unsigned division, `%edx` is filled with zeros. The divisor is given as the operand, and the result is split with the quotient in `%eax` and the remainder in `%edx`
+
+# 3.6 Control
+
+Not all programs run instructions sequentially, constructs like conditionals, loops, and switches require conditional execution. At machine level, this is achieved by testing data and then either altering the control flow (with jumps) or data flow
+
+## 3.6.1 Condition codes
+
+The CPU maintains a single condition code register that contains several 1-bit flags, each recording the outcome of a recent arithmetic/logic operation:
+
+- CF (Carry Flag): set if the most recent operation generated a carry out of the MSB (used to detect unsigned overflow)
+- ZF (Zero Flag): set if the most recent operation yielded zero
+- SF (Sign Flag): set if the most recent operation yielded a negative value
+- OF (Overflow Flag): set if the most recent operation caused a two's complement overflow
+
+All arithmetic/logic operation set the condition codes, except `leal`, which only computes an effective address. For example:
+
+- XOR: set CF and OF to 0
+- shift operations: set the CF to the last bit shifted out, and OF to 0
+- INC/DEC: set the ZF and OF, but leave the CF unchanged
+
+CMP instructions behaves like the SUB instructions, but only set condition codes (no destination update). It sets ZF to zero if the operands are equal, and the other flags reflect ordering. TEST instructions behave similar to the AND instructions but only sets condition codes (no destination is updated). Often used to check if a value is zero, negative, positive, or matches a bit mask
+
+## 3.6.2 Accessing the condition codes
+
+One common way to use condition codes is with SET instructions, which set a single byte to 0 0r 1 depending on certain flag combinations. The instruction suffixes (e.g. `setl`, `setb`) specify the conditions begin tested, not the operand size. A SET instruction writes to a single-byte register or memory location, and to obtain 32-bit results, the upper 24 bits must be cleared
+
+1. Background:
+   - CMP computes $a - b$, (without storing it) and sets condition codes
+   - Then the SET instructions reads those flags and decides whether to write 0 or 1
+2. Equality (`sete` or "set when equal"):
+   - If $a = b$, then $a - b = 0$, so $ZF = 1$
+   - Therefore `sete` just checks the Zero Flag
+3. Signed comparisons (`setl` or "set if less than"):
+   - For signed integers, we can about SF and OF
+   - If no overflow ($OF = 0$): $a < b$, $SF = 1$
+   - If overflow occurs ($OF = 1$): the sense of "less" flips, so you must use $SF$ ^ $OF$
+   - So the processor actually computes $SF$ ^ $OF$ to test signed $<$
+   - Other signed comparisons ($<=$, $>$, $>=$) are built from ZF and SF ^ OF
+4. Unsigned comparisons (`setb` or "set if below"):
+   - For unsigned integers, subtraction sets the CF when $a < b$
+   - So:
+     - Unsigned $<$ uses CF
+     - Unsigned $<=$ uses CF and ZF
+
+At machine level, values are just bits, so there's no inherent distinction between signed and unsigned types. Most arithmetic instructions work the same for both, but some operations (e.g. shifts, multiplication/division, and comparisons) require different instructions or use different condition codes to handle signed and unsigned values correctly
