@@ -315,3 +315,14 @@ One common way to use condition codes is with SET instructions, which set a sing
      - Unsigned $<=$ uses CF and ZF
 
 At machine level, values are just bits, so there's no inherent distinction between signed and unsigned types. Most arithmetic instructions work the same for both, but some operations (e.g. shifts, multiplication/division, and comparisons) require different instructions or use different condition codes to handle signed and unsigned values correctly
+
+## 3.6.3 Jump instructions and their encodings
+
+Jump instructions alter control flow by transferring execution to a labeled target. Labels in assembly mark destinations, and the assembler encodes them as actual addresses in machine code
+
+Jump instructions transfer execution either unconditionally (`jmp`) or conditionally based on condition codes. An unconditional jump can be direct (to a label e.g. `jmp .L1`) or indirect (via a register or memory location e.g. `jmp *(%eax)`, `jmp *%eax`), while conditional jumps are always direct. Their suffixes match those of SET instructions, denoting condition rather than operand sizes. In assembly, jump targets appear as labels, but the assembler/linker encodes them as actual addresses, often using PC-relative offsets (difference between the target's instruction address and the address of the instruction immediately after the jump).
+
+Assemblers encode jump targets as relative offsets rather than absolute addresses because:
+
+- compact encoding: only 1-2 bytes is needed for the offset rather than a 4-byte absolute address
+- relocatable: an object file can be loaded anywhere in memory without rewriting jump instructions because the offset remains the same

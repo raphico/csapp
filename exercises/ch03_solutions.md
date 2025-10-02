@@ -241,3 +241,69 @@ The suffix 'w' indicates 16-bit operands, while `seta` means $>$ in unsigned com
 
 - `data_t` = `unsigned short`
 - `TEST` = $>$
+
+# Practice problem 3.15
+
+**A:**
+
+The encoded offset is at 0x05 (decimal 5). With PC-relative addressing, the jump target is computed as:
+
+$$
+\text{target } = \text{next instruction address } + \text{offset}
+$$
+
+$$
+\text{target } = 0x05 + 0x8048291 = 0x8048296
+$$
+
+Therefore the instruction is:
+
+```
+je 8048296
+```
+
+**B:**
+
+The encoded offset is 0xe7 (decimal -25 in two's complement), and the next instruction address is 0x8048359:
+
+```
+jb 8048340
+```
+
+**C:**
+
+The offset is encoded as 0x12 (decimal 18), and the jump target is at 0x8048391; therefore the mov address is at:
+
+$$
+0x8048391 - 0x12 = 0x804837f
+$$
+
+and the jump instruction is 2 bytes long (`74 12`). So its address is at:
+
+$$
+\text{jump instruction address} = \text{next instruction address} - 2
+= 0x804837f - 2
+= 0x804837d
+$$
+
+**D:**
+
+The offset is encoded in little-endian, so 0xffffffe0 (decimal -32 in two's complement), and the next instruction address 0x80482c4 (134513348)
+
+$$
+\text{target} = \text{next instruction address} + \text {offset}
+$$
+
+$$
+\text{target} = 134513348 - 32 = 0x80482A4
+$$
+
+The instruction is:
+
+```
+jmp 80482a4
+```
+
+**E:**
+
+The first two byte denote an indirect jump, and the last four byte of the byte encoding on the left (fc 9f 04 08) represent the absolute address in little-endian
