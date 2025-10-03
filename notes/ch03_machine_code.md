@@ -330,3 +330,29 @@ Assemblers encode jump targets as relative offsets rather than absolute addresse
 ## 3.6.4 Translating conditional branches
 
 C Conditionals are encoded in assembly as conditional and unconditional jumps
+
+## 3.6.5 Loops
+
+C loops don't have a machine-code equivalent; compilers implement them using conditional jumps, typically converting all loops into do-while form first
+
+### Do-while loops
+
+Do while loops execute the body at least once, then tests the condition; if true, it jumps back and repeats. Compilers translate this into a loop label, body code, condition check, and a conditional jump back to the label. So
+
+```
+do
+   body-statement
+   while (test-expression);
+```
+
+becomes
+
+```
+loop:
+   body
+   t = test-expression
+   if (t)
+      goto loop;
+```
+
+%eax holds the result because it's the return register

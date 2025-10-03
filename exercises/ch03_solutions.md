@@ -400,3 +400,68 @@ int test(int x, int y) {
     return val;
 }
 ```
+
+# Practice problem 3.19
+
+**A. What is the maximum value of n for which we can represent n! with a 32-bit int?**
+
+$$
+n! <= 2^31 - 1
+$$
+
+which is about 13!
+
+**B. What about for a 64-bit long long int?**
+
+$$
+n! <= 2^63 - 1
+$$
+
+which is about 20!
+
+# Practice problem 3.20
+
+**A. Make a table of register usage, similar to the one shown in Figure 3.14(b).**
+
+| Register | Variable | Initially |
+| -------- | -------- | --------- |
+| %eax     | x        | x         |
+| %edx     | n        | n         |
+| %ecx     | y        | y         |
+
+**B. Identify test-expr and body-statement in the C code, and the corresponding lines in the assembly code.**
+
+test-expr:
+
+```
+8       testl %edx, %edx
+9       jle .L5
+10      cmpl %edx, %ecx
+11      jl .L2
+```
+
+body-statement:
+
+```
+5       addl %edx, %eax
+6       imull %edx, %ecx
+7       subl $1, %edx
+```
+
+**C. Add annotations to the assembly code describing the operation of the program, similar to those shown in Figure 3.14(b).**
+
+```
+x at %ebp+8, y at %ebp+12, n at %ebp+16
+1   movl 8(%ebp), %eax      ; Load x into %eax
+2   movl 12(%ebp), %ecx     ; Load y into %ecx
+3   movl 16(%ebp), %edx     ; Load n into %edx
+4   .L2:
+5       addl %edx, %eax     ; Computes x += n
+6       imull %edx, %ecx    ; computes y *= n
+7       subl $1, %edx       ; Computes n--
+8       testl %edx, %edx    ; Checks if n == zero
+9       jle .L5             ; if n <= 0 goto done
+10      cmpl %edx, %ecx     ; Computes y -= n
+11      jl .L2              ; if y < n goto L2
+12  .L5:                    ; returns x
+```
