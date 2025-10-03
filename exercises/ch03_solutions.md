@@ -307,3 +307,96 @@ jmp 80482a4
 **E:**
 
 The first two byte denote an indirect jump, and the last four byte of the byte encoding on the left (fc 9f 04 08) represent the absolute address in little-endian
+
+# Practice problem 3.16
+
+a %ebp+8, p at %ebp+12
+1 movl 8(%ebp), %edx Get a
+2 movl 12(%ebp), %eax Get p
+3 testl %eax, %eax checks p == NULL
+4 je .L3 jump if p == NULL
+5 testl %edx, %edx checks a <= 0
+6 jle .L3 if a <= 0
+7 addl %edx, (%eax) *p = a + *p
+8 .L3:
+
+**A:**
+
+```c
+void cond(int a, int *p) {
+    if (p == 0)
+        goto done;
+    if (a <= 0)
+        goto done;
+    *p += a;
+    goto done;
+done:
+    return;
+}
+```
+
+**B:**
+
+The condition `p && a > 0` requires evaluating two sub-conditions with short-circuit logic. The compiler implement this by generating two conditional branches
+
+# Practice problem 3.17
+
+**A:**
+
+```c
+int absdiff(int x, int y) {
+    int result;
+    if (x < y)
+        goto true;
+    result = x - y;
+    goto done;
+true:
+    result = y - x;
+done:
+    return result;
+}
+```
+
+**B:**
+
+If the if statement doesn't have an else, Rule 1 slightly more efficient and simpler, because you can just jump over the then. While rule 2 adds unnecessary jumps
+
+# Practice problem 3.18
+
+```
+x at %ebp+8, y at %ebp+12
+1 movl 8(%ebp), %eax            ; load x into %eax
+2 movl 12(%ebp), %edx           ; load y into %edx
+3 cmpl $-3, %eax                ; Compare -3 : x (computes x + 3)
+4 jge .L2                       ; if x >= -3 goto L2
+5 cmpl %edx, %eax               ; Compare y : x (computes x - y)
+6 jle .L3                       ; if x <= y goto L3
+7 imull %edx, %eax              ; val = x * y
+8 jmp .L4                       ; goto done
+9 .L3:
+10  leal (%edx,%eax), %eax      ; val = x + y
+11  jmp .L4                     ; goto done
+12 .L2:
+13  cmpl $2, %eax               ; Compare 2 : x (computes x - 2)
+14  jg .L5                      ; if x > 2 goto L5
+15  xorl %edx, %eax             ; val = x ^ y
+16  jmp .L4                     ; goto done
+17 .L5:
+18  subl %edx, %eax             ; val =  x - y
+19 .L4:                         ; return val in %eax
+```
+
+```c
+int test(int x, int y) {
+    int val = x - y;
+    if (x < -3) {
+        if (x > y)
+            val = x * y;
+        else
+            val = x + y;
+    } else if (x <= 2) {
+        val = x ^ y;
+    }
+    return val;
+}
+```

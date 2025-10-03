@@ -326,3 +326,7 @@ Assemblers encode jump targets as relative offsets rather than absolute addresse
 
 - compact encoding: only 1-2 bytes is needed for the offset rather than a 4-byte absolute address
 - relocatable: an object file can be loaded anywhere in memory without rewriting jump instructions because the offset remains the same
+
+## 3.6.4 Translating conditional branches
+
+C Conditionals are encoded in assembly as conditional and unconditional jumps
