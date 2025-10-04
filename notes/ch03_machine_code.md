@@ -333,7 +333,7 @@ C Conditionals are encoded in assembly as conditional and unconditional jumps
 
 ## 3.6.5 Loops
 
-C loops don't have a machine-code equivalent; compilers implement them using conditional jumps, typically converting all loops into do-while form first
+C loops don't have a machine-code equivalent; compilers implement them using conditional jumps, typically converting all loops into do-while form first, because it gives the compiler a simple, uniform way to generate loop code
 
 ### Do-while loops
 
@@ -356,3 +356,7 @@ loop:
 ```
 
 %eax holds the result because it's the return register
+
+### While loops
+
+While loop unlike a do while loop doesn't execute the body at least once. So the compiler translates the while-loop into a do-while loop, but first introduces a conditional branch to skip first execution if needed

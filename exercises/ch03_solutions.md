@@ -465,3 +465,122 @@ x at %ebp+8, y at %ebp+12, n at %ebp+16
 11      jl .L2              ; if y < n goto L2
 12  .L5:                    ; returns x
 ```
+
+# Practice problem 3.21
+
+**A. Register %edx is initialized on line 6 and updated within the loop on line 11. Consider this to be a new program variable. Describe how it relates to the variables in the C code.**
+
+%edx initially holds `a + b`, and since only a changes in the loop, %edx is incremented alongside a to always hold the updated `(a + b)` without recomputing the sum in every iteration
+
+**B. Create a table of register usage for this function.**
+
+| Register | Variable | Initially |
+| -------- | -------- | --------- |
+| %ecx     | a        | a         |
+| %ebx     | b        | b         |
+| %eax     | result   | 1         |
+| %edx     | abp      | a + b     |
+
+**C. Annotate the assembly code to describe how it operates**
+
+```
+a at %ebp+8, b at %ebp+12
+1   movl 8(%ebp), %ecx      Load a
+2   movl 12(%ebp), %ebx     Load b
+3   movl $1, %eax           Set result = 1
+4   cmpl %ebx, %ecx         Compares b : a (computes a - b)
+5   jge .L11                if a >= b goto done
+6   leal (%ebx,%ecx), %edx  abp = b + a
+7   movl $1, %eax           compiler redundantly reassigns result = 1
+8   .L12:
+9       imull %edx, %eax    result *= abp
+10      addl $1, %ecx       a++
+11      addl $1, %edx       abp += 1
+12      cmpl %ecx, %ebx     Compare a : b (computes b - a)
+13      jg .L12             if b > a loop
+14  .L11:                    return result
+```
+
+**D. Write a goto version of the function (in C) that mimics how the assembly code program operates**
+
+```c
+int loop_while(int a, int b) {
+    int result = 1;
+    if (a >= b)
+        goto done;
+    int apb = a + b;
+loop:
+    result *= abp;
+    a++;
+    abp += 1;
+    if (b > a)
+        goto loop;
+done:
+    return result;
+}
+```
+
+# Practice problem 3.22
+
+```
+x at %ebp+8
+1   movl 8(%ebp), %edx      Load x
+2   movl $0, %eax           Set val = 0
+3   testl %edx, %edx        Checks x == 0
+4   je .L7                  if x == 0 goto L7
+5   .L10:
+6       xorl %edx, %eax     val ^= x
+7       shrl %edx           x >>= 1
+8       jne .L10            if x == 0 loop
+9   .L7:
+10      andl $1, %eax       val &= 1
+```
+
+**A. Use the assembly-code version to fill in the missing parts of the C code.**
+
+```c
+int fun_a(unsigned x) {
+    int val = 0;
+    while (x != 0) {
+        val ^= x; // 1) 0000 ^ 1001 = 1001 9 2) 1001 ^ 0100 = 1101 13 3) 1101 ^ 0010 = 1111 15 16 16
+        x >>= 1; // 0001
+    }
+    return val & 0x1; 15
+}
+```
+
+**B. Describe in English what this function computes.**
+
+Each iteration:
+
+- xors value with x
+- shifts x right by 1
+- continues until x is 0
+
+So:
+
+- `val` = x ^ (x >> 1) ^ (x >> 2) ^ ... until x is 0
+- The `& 1` at the end gets the LSB of `val`. So the function only returns the LSB of `val`
+
+Let say:
+
+$$
+x = b_{k}b_{k-1}\ddots b_{2}b_{1}b_{0}
+$$
+
+- After shifting right by 0 -> LSB = $b_{0}$
+- After shifting right by 1 -> LSB = $b_{1}$
+- ...and so on
+
+So the LSB of the result is just:
+
+$$
+b_{0} \oplus b_{1} \oplus b_{2} \ddots b_{k}
+$$
+
+$$
+\text{result} = (\text{sum of bits of } x) \bmod 2
+$$
+
+if even number of 1s in x -> result 0
+if odd number of 1s in x -> result 1
