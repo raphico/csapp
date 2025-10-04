@@ -584,3 +584,72 @@ $$
 
 if even number of 1s in x -> result 0
 if odd number of 1s in x -> result 1
+
+# Practice problem 3.23
+
+```
+x at %ebp+8
+1   movl 8(%ebp), %ebx      ; load x
+2   movl $0, %eax           ; initialize val = 0
+3   movl $0, %ecx           ; initialize i = 0
+4 .L13:
+5   leal (%eax,%eax), %edx  ; compute 2 * val
+6   movl %ebx, %eax         ; temporarily load x
+7   andl $1, %eax           ; extract LSB of x: x & 1
+8   orl %edx, %eax          ; val = (2 * val) | (x & 1)
+9   shrl %ebx               ; x >>= 1
+10  addl $1, %ecx           ; i++
+11  cmpl $32, %ecx          ; Compare 32 : i (computers i - 32)
+12  jne .L13                ; if i != 32 loop
+```
+
+**A. Use the assembly-code version to fill in the missing parts of the C code.**
+
+```c
+int fun_b(unsigned x) {
+    int val = 0;
+    int i;
+    for (i = 0; i != 32; i++) {
+        val = (2 * val) | (x & 1);
+        x >>= 1;
+    }
+    return val;
+}
+```
+
+**B. Describe in English what this function computes.**
+
+Reverses the bit order of x
+
+# Practice problem 3.24
+
+**A. What would we get if we naively applied our rule for translating the for loop into a while loop? What would be wrong with this code?**
+
+```c
+int sum = 0;
+int i = 0;
+while (i < 10) {
+    if (i & 1)
+        continue;
+    i++;
+    sum += i;
+}
+```
+
+If we naively translate for loop into a while loop, the continue statement would skip the incrimination of i, resulting in an infinite loop
+
+**B. How could you replace the continue statement with a goto statement to ensure that the while loop correctly duplicates the behavior of the for loop?**
+
+```c
+int sum = 0;
+int i = 0;
+loop:
+    if (i & 1)
+        goto update;
+    sum += i
+update:
+    i++;
+    if (i < 10)
+        goto loop;
+
+```

@@ -333,11 +333,11 @@ C Conditionals are encoded in assembly as conditional and unconditional jumps
 
 ## 3.6.5 Loops
 
-C loops don't have a machine-code equivalent; compilers implement them using conditional jumps, typically converting all loops into do-while form first, because it gives the compiler a simple, uniform way to generate loop code
+C loops don't have a direct machine-code equivalent; compilers implement them using conditional jumps, usually by first translating all loop types into a do-while loop. This approach simplifies code generation by providing a simple, uniform structure for handling all loop types
 
 ### Do-while loops
 
-Do while loops execute the body at least once, then tests the condition; if true, it jumps back and repeats. Compilers translate this into a loop label, body code, condition check, and a conditional jump back to the label. So
+Do-while loops execute the body at least once before testing the condition. If the condition evaluates to true, the control jumps back to the start of the loop. Compilers implement do-while loops using a combination of a loop label, the loop body, a condition check, and a conditional jump
 
 ```
 do
@@ -359,4 +359,51 @@ loop:
 
 ### While loops
 
-While loop unlike a do while loop doesn't execute the body at least once. So the compiler translates the while-loop into a do-while loop, but first introduces a conditional branch to skip first execution if needed
+While loops, unlike do-while loops, may not execute the body at all. To implement them, compilers typically translate them into a do-while loop structure but insert an initial condition branch to skip the body if needed
+
+```
+while (test-expr)
+   body-statement
+
+if (!test-expr)
+   goto done;
+do
+   body-statement
+   while (test-expr);
+done:
+```
+
+### For loops
+
+Compilers implement for loops by first translating them into an equivalent while loop, and then into a do-while loop:
+
+```
+for (init-expr; test-expr; update-expr)
+   body-statement
+
+init-expr;
+while (test-expr) {
+   body-statement
+   update-expr;
+}
+
+init-expr
+if (!test-expr)
+   goto done;
+do {
+   body-statement
+   update-expr;
+} while (test-expr);
+done:
+
+init-expr
+if (!test-expr)
+   goto done;
+loop:
+   body-statement
+   update-expr;
+   t = text-expr;
+   if (t)
+      goto loop;
+done:
+```
