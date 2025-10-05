@@ -653,3 +653,85 @@ update:
         goto loop;
 
 ```
+
+# Practice problem 3.25
+
+**A. What is the approximate miss penalty?**
+
+Given:
+
+- $T_{OK} = 16$
+- $T_{MP} = ?$
+- $T_{avg} = 31$
+- $p = 0.5$
+
+$$
+T_{avg}(p) = T_{OK} + pT_{MP}
+$$
+
+$$
+31 = 16 + 0.5 \cdot T_{MP}
+$$
+
+$$
+T_{MP} = 15 / 0.5 = 30\text{ cycles}
+$$
+
+**B. How many cycles would the function require when the branch is mispredicted?**
+
+$$
+T_{MP} + T_{OP} = 30 + 16 = 46\text{ cycles}
+$$
+
+# Practice problem 3.26
+
+**A. What operation is OP?**
+
+`/`
+
+**B. Annotate the code to explain how it works.**
+
+```
+Register: x in %edx
+1   leal 3(%edx), %eax  ; computes x + 3
+2   testl %edx, %edx    ; computes x & x = x (tests signs and zero)
+3   cmovns %edx, %eax   ; if x >= 0 keep x instead of x + 3
+4   sarl $2, %eax       ; arithmetically shift x by 2 to the right (divide by 4, rounds toward $-\infty$)
+```
+
+# Practice problem 3.27
+
+```
+x at %ebp+8, y at %ebp+12
+1   movl 8(%ebp), %ebx      ; Loads x
+2   movl 12(%ebp), %ecx     ; Loads y
+3   testl %ecx, %ecx        ; test y signs and zero
+4   jle .L2                 ; if y <= 0 goto L2
+5   movl %ebx, %edx         ; edx = x
+6   subl %ecx, %edx         ; edx = x - y
+7   movl %ecx, %eax         ; eax = y
+8   xorl %ebx, %eax         ; eax = x ^ y
+9   cmpl %ecx, %ebx         ; compares y : x (computes x - y)
+10  cmovl %edx, %eax        ; if x < y eax = edx (x - y)
+11  jmp .L4                 ; goto done
+12 .L2:
+13  leal 0(,%ebx,4), %edx   ; edx = x * 4
+14  leal (%ecx,%ebx), %eax  ; eax = x + y
+15  cmpl $-2, %ecx          ; compares y : -2 (computes y + 2)
+16  cmovge %edx, %eax       ; if y >= -2 eax = edx (x * 4)
+17 .L4:                     ; return eax
+```
+
+```c
+int test(int x, int y) {
+    int val = x * 4;
+    if (y > 0) {
+        if (x < y)
+            val = x - y;
+        else
+            val = x ^ y;
+    } else if (y < -2)
+        val = x + y;
+    return val;
+}
+```

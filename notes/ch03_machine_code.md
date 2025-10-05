@@ -407,3 +407,44 @@ loop:
       goto loop;
 done:
 ```
+
+## 3.6.6 Conditional move instructions
+
+Modern processors execute multiple instructions in parallel using pipelining, which requires predicting the next instruction path to keep the pipeline full of instructions to execute. Conditional branches disrupt this flow because a wrong prediction requires CPU to flush and refill the pipeline, wasting 20-40 clock cycles. This penalty is especially severe when conditions are unpredictable (e.g. `if (x < y)`).
+
+To avoid this stalls, modern architecture use conditional move (CMOV) instructions, which eliminates branching by changing data flow instead of control flow. The processor computes both outcomes in parallel and conditionally copies the correct value, allowing the pipeline to remain full and performance consistent. Compilers use CMOV when the cost of computing both outcomes is lower than than the expected penalty of branch mispredictions.
+
+> A clock cycle is the smallest timing unit of a processor
+> Each cycle corresponds to a tick of the processor's internal clock
+> The clock frequency (e.g. 3 GHZ) tells you how many cycles happen per second
+> Every operation takes one or more cycles to complete
+> So a branch misprediction that cost 40 clock cycles means the CPU loses the equivalent of 40 clock ticks' worth of work
+
+Assume:
+
+- $p$ = probability of misprediction
+- $T_{OK}$ = cycles required to execute code when prediction is correct
+- $T_{MP}$ = extra cycles lost per prediction or misprediction penalty
+
+Then the average time required to execute code as a function of $p$:
+
+$$
+T_{avg}(p) = (1 - p)T_{OK} + p(T_{OK} + T_{MP}) = T_{OK} + pT_{MP}
+$$
+
+The slowdown factor (how many times slower one case is compared to another) is:
+
+$$
+T_{MP} / T_{OK}  + 1
+$$
+
+Conditional move instructions copy a value from a source register or memory location to a destination register only if the specified condition holds. They operate on 32- or 16-bit operands, and the operand size is inferred from the destination register. Unlike jump instructions, CMOV instructions don't alter control flow; the processor simply reads the source, checks the condition codes, and updates the destination accordingly. Semantically, this corresponds to:
+
+```
+vt = then-expr;
+v = else-expr;
+t = test-expr;
+if (t) v = vt;
+```
+
+However, CMOV instructions cannot be used when either outcome can trigger an error (e.g. null pointer dereference) or produce a side effect (e.g. updating a global variable). In such cases, branching is required to preserve correct behavior. Compilers only use CMOV instructions selectively: when both outcomes are error-free and side-effect-free, and when cost of performing both outcomes is lower than the potential penalty of branch misprediction
