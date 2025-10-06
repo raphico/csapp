@@ -735,3 +735,110 @@ int test(int x, int y) {
     return val;
 }
 ```
+
+# Practice problem 3.28
+
+```
+x at %ebp+8
+1   movl 8(%ebp), %eax  ; Load x
+2   addl $2, %eax       ; index = x + 2, minimum case label = -2
+3   cmpl $6, %eax       ; computes index - 6
+4   ja .L2              ; if index > 6 goto default case, maximum case label = 4
+5   jmp *.L8(,%eax,4)
+```
+
+Jump table for switch2
+
+```
+1 .L8:
+2 .long .L3 ; case -2
+3 .long .L2 ; case - 1
+4 .long .L4 ; case 0
+5 .long .L5 ; case 1
+6 .long .L6 ; case 2
+7 .long .L6 ; case 3
+8 .long .L7 ; case 4
+```
+
+- Line 6 and 7 have the same destination
+- Entry 3 in the jump table also jumps to the default case, meaning the isn't a real case for for x = -1
+
+**A. What were the values of the case labels in the switch statement body?**
+
+The integer values used for case lables in the switch statments include: -2, -1, 0, 1, 2, 3, 4
+
+**B. What cases had multiple labels in the C code?**
+
+labels 2 and 3
+
+# Practice problem 3.29
+
+```
+a at %ebp+8, b at %ebp+12, c at %ebp+16
+1   movl 8(%ebp), %eax      ; Load a
+2   cmpl $7, %eax           ; Compute a - 7
+3   ja .L2                  ; if a > 7 goto loc_def
+4   jmp *.L7(,%eax,4)       ; Goto *jt[a] entries: 0...7
+
+5 .L2:                      ; default case
+6   movl 12(%ebp), %eax     ; answer = b
+7   jmp .L8                 ; Goto done
+
+8 .L5:                      ; case 4
+9   movl $4, %eax           ; answer = 4
+10  jmp .L8                 ; Goto done
+
+11 .L6:                     ; case 5
+12  movl 12(%ebp), %eax     ; Load b
+13  xorl $15, %eax          ; b ^ 15
+14  movl %eax, 16(%ebp)     ; c = b ^ 15
+                            ; fallthrough to case 0 from case 5
+15 .L3:                     ; case 0
+16  movl 16(%ebp), %eax     ; Load c
+17  addl $112, %eax         ; answer = c + 112
+18  jmp .L8                 ; Goto done
+
+19 .L4:                     ; case 2 and case 7
+20  movl 16(%ebp), %eax     ; answer = c
+21  addl 12(%ebp), %eax     ; answer += b
+22  sall $2, %eax           ; answer <<= 2
+23 .L8:                     ; done
+```
+
+```
+1 .L7:
+2   .long .L3   ; case 0
+3   .long .L2   ; case 1
+4   .long .L4   ; case 2
+5   .long .L2   ; case 3
+6   .long .L5   ; case 4
+7   .long .L6   ; case 5
+8   .long .L2   ; case 6
+9   .long .L4   ; case 7
+```
+
+```c
+int switcher(int a, int b, int c)
+{
+    int answer;
+    switch(a) {
+    case 5: /* Case A */
+        c = b ^ 15;
+        /* Fall through */
+    case 0: /* Case B */
+        answer = c + 112;
+        break;
+    case 2: /* Case C */
+    case 7: /* Case D */
+        answer = (c + b) << 2;
+        break;
+    case 4: /* Case E */
+        answer = 4;
+        break;
+    default:
+        answer = b;
+    }
+    return answer;
+}
+
+```

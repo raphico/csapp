@@ -448,3 +448,11 @@ if (t) v = vt;
 ```
 
 However, CMOV instructions cannot be used when either outcome can trigger an error (e.g. null pointer dereference) or produce a side effect (e.g. updating a global variable). In such cases, branching is required to preserve correct behavior. Compilers only use CMOV instructions selectively: when both outcomes are error-free and side-effect-free, and when cost of performing both outcomes is lower than the potential penalty of branch misprediction
+
+## 3.6.7 Switch statements
+
+A switch statement enables multi-branching based on the value of an integer expression. It provides a more readable and organized alternative to long-chains of if-else statements.
+
+Compilers implement switch statements either as a chain of conditional tests or by using a jump table. When a switch has many cases or the case values form a dense range of values, compilers typically use a jump table for efficiency.
+
+A jump table is an array of code addresses, where entry `i` contains the address of the code to execute when the switch index equals i. The program uses the switch value to index into this table and then directly jump to the corresponding case. This makes the time to select a case independent of the number of cases, making it faster than checking condition in sequence.
