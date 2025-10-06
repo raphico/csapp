@@ -456,3 +456,50 @@ A switch statement enables multi-branching based on the value of an integer expr
 Compilers implement switch statements either as a chain of conditional tests or by using a jump table. When a switch has many cases or the case values form a dense range of values, compilers typically use a jump table for efficiency.
 
 A jump table is an array of code addresses, where entry `i` contains the address of the code to execute when the switch index equals i. The program uses the switch value to index into this table and then directly jump to the corresponding case. This makes the time to select a case independent of the number of cases, making it faster than checking condition in sequence.
+
+# 3.7 Procedures
+
+A procedure transfers both control and data between program parts. On IA32, hardware instructions handle only the control transfer, while data passing and local-variable management rely on stack manipulation
+
+## 3.7.1 Stack frame structure
+
+In IA32, the stack is used to manage procedure calls by storing information each procedure needs while it executes. Each procedure call get its own stack frame, a region that holds:
+
+- arguments passed to the procedure
+- return address (where to resume after returning)
+- saved registers (to resume the caller's state)
+- local variables (when registers are insufficient or their addresses are needed)
+
+Two key registers define the frame:
+
+- %ebp (frame pointer): fixed reference point for accessing local variables and parameters
+- %esp (stack pointer): holds the address of the current top as stack shrinks and grows
+
+When procedure P calls procedure Q:
+
+- P pushes Q's argument, then the return address
+- Q, upon starting, saves P's %ebp, sets %ebp = %esp, and allocates space for locals by decrementing %esp
+- Q may also use frame to store arguments for any procedure it calls
+
+## 3.7.2 Transferring Control
+
+The `call`, `ret`, and `leave` instructions manage control flow between procedures
+
+- `call`
+  - Pushes the return address (the address right after the call) onto the stack
+  - Then jumps to the start of the called procedure
+  - Can be direct (`call Label`) or indirect (`call *operand`, using a register or memory location)
+- `ret`
+  - pops the return address off the stack and jumps back to that address
+  - works correctly if the stack pointer points to where the preceding call stored the return address
+- `leave`
+  - Prepares the stack for returning by:
+    1. Setting `%esp = %ebp` (restore the stack pointer to the start of the current frame)
+    2. `pop %ebp` (restore the caller's frame pointer and move `%esp` to the end of the caller's frame)
+  - Equivalent to the sequence:
+    ```asm
+    movl %ebp, %esp
+    popl %ebp
+    ```
+- After this, `ret` completes the return by transferring control to the saved address
+- The `%eax` register holds return values for functions that return integers or pointers

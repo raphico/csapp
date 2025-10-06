@@ -842,3 +842,17 @@ int switcher(int a, int b, int c)
 }
 
 ```
+
+# Practice problem 3.30
+
+**A. To what value does register %eax get set?**
+
+%eax holds the return address (the address of the instruction immediately after the call)
+
+**B. Explain why there is no matching ret instruction to this call.**
+
+The return address is immediately popped into %eax, so ret would no longer have a valid address to return to
+
+**C. What useful purpose does this code fragment serve?**
+
+To obtain the address of the next instruction or load the PC into a register
