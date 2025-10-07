@@ -969,3 +969,13 @@ rfun returns the number of 1 bits in the binary representation of x
 | U     | 4            | 24         | $x_{U}$       | $x_{U} + 4i$  |
 | V     | 12           | 96         | $x_{V}$       | $x_{V} + 12i$ |
 | W     | 4            | 16         | $x_{W}$       | $x_{W} + 4i$  |
+
+# Practice problem 3.36
+
+| Expression | Type     | Value               | Assembly code              |
+| ---------- | -------- | ------------------- | -------------------------- |
+| S + 1      | short \* | $x_{s} + 2$         | leal 2(%edx),%eax          |
+| S[3]       | short    | $M[x_{s} + 6]$      | movw 6(%edx),%ax           |
+| &S[i]      | short \* | $x_{s} + 2i$        | leal (%edx,%ecx,2),%eax    |
+| S[4*i + 1] | short    | $M[x_{s} + 8i + 2]$ | movw 2(%edx,%ecx,8),%ax    |
+| S + i - 5  | short \* | $x_{s} + 2i - 10$   | leal -10(%edx,%ecx,2),%eax |

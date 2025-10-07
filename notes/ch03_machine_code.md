@@ -590,3 +590,27 @@ The address of element `A[i]` is given by:
 $$
 x_{A} + L \cdot i
 $$
+
+## 3.8.2 Pointer arithmetic
+
+When you do arithmetic on a pointer, the computed value is scaled according to the size of the data type referenced by the pointer.
+
+If
+
+- $p$ points to a type $T$
+- $x_{p}$ is the memory address it holds
+- $L$ is the size (in bytes) of type T
+
+then
+
+$$
+p + i \rightarrow x_{p} + L \cdot i
+$$
+
+| C Expression | Meaning                   | Equivalent Assembly Behavior |
+| ------------ | ------------------------- | ---------------------------- |
+| `A[i]`       | “element i of array A”    | `*(A + i)`                   |
+| `&A[i]`      | address of element i      | base + scaled index          |
+| `*(A + k)`   | dereference at offset `k` | load from base + (k × size)  |
+
+Pointer differences within the same data structure `&E[i] - E` yield integer indices, automatically scaled by element size
