@@ -503,3 +503,64 @@ The `call`, `ret`, and `leave` instructions manage control flow between procedur
     ```
 - After this, `ret` completes the return by transferring control to the saved address
 - The `%eax` register holds return values for functions that return integers or pointers
+
+## 3.7.3 Register usage conventions
+
+Since registers are shared among all procedure calls, conventions are needed to prevent one procedure from destroying another's data during a call.
+
+By IA32 convention:
+
+1. Caller-save registers: `%eax`, `%edx`, `%ecx`
+   - The caller must save these if it wants their values preserved across calls, because the callee can freely modify them
+2. Callee-save registers: `%esi`, `%ebx`, `%edi`
+   - The callee must save and restore these if it must use them
+   - The caller can assume their values stay unchanged after the call
+3. `%esp` and `%ebp` are maintained according to stack frame convention
+
+## 3.7.4 Procedure example
+
+- **Stack Frame:**
+  Each procedure (function) gets its own section of the stack to store:
+
+  - Local variables
+  - Saved registers
+  - Return address
+  - Caller’s frame pointer (`%ebp`)
+
+- **Frame Pointer Chain:**
+
+  - `pushl %ebp` saves the **caller’s** frame pointer.
+  - `movl %esp, %ebp` sets up the **callee’s** frame pointer.
+  - This creates a linked chain of frames for stack tracing/debugging.
+
+- **Caller Actions:**
+
+  1. Save old `%ebp`, set up new one.
+  2. Allocate stack space for locals (e.g., `subl $24, %esp`).
+  3. Compute and push arguments (e.g., `leal -4(%ebp), %eax`).
+  4. Call the function (`call swap_add`), which pushes the return address.
+
+- **Callee Setup:**
+
+  1. Save caller’s `%ebp` → `pushl %ebp`
+  2. Set `%ebp` → `movl %esp, %ebp`
+  3. Save callee-saved registers (e.g., `%ebx`)
+
+- **Accessing Arguments:**
+
+  - Arguments are found _above_ `%ebp`:
+
+    - `8(%ebp)` → first argument (`xp`)
+    - `12(%ebp)` → second argument (`yp`)
+
+  - Locals are found _below_ `%ebp` (negative offsets).
+
+- **Returning:**
+
+  - Restore saved registers (`popl %ebx`, `popl %ebp`)
+  - `ret` pops the return address and jumps back to caller.
+  - Caller can use `leave` to clean up its own frame.
+
+- **Stack Alignment Convention:**
+
+  - gcc often allocates stack space in multiples of **16 bytes** for data alignment, even if not all space is used.

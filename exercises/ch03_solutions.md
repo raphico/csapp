@@ -773,7 +773,7 @@ labels 2 and 3
 
 # Practice problem 3.29
 
-```
+```asm
 a at %ebp+8, b at %ebp+12, c at %ebp+16
 1   movl 8(%ebp), %eax      ; Load a
 2   cmpl $7, %eax           ; Compute a - 7
@@ -805,7 +805,7 @@ a at %ebp+8, b at %ebp+12, c at %ebp+16
 23 .L8:                     ; done
 ```
 
-```
+```asm
 1 .L7:
 2   .long .L3   ; case 0
 3   .long .L2   ; case 1
@@ -856,3 +856,69 @@ The return address is immediately popped into %eax, so ret would no longer have 
 **C. What useful purpose does this code fragment serve?**
 
 To obtain the address of the next instruction or load the PC into a register
+
+# Practice problem 3.31
+
+There's no inconsistency. By IA32 convention:
+
+- %eax, %ecx, and %edx are caller-save registers: the callee can freely modify them without restoring their values
+- %ebx, %esi, and %edi are callee-save registers: the callee must save their original values (typically on the stack) and restore them before returning
+
+Hence, the procedure saves %ebx, %esi, and %edi at entry (lines 2–4) and restores them later, while freely modifying %eax, %ecx, and %edx
+
+# Practice problem 3.32
+
+```asm
+1   movsbl 12(%ebp),%edx    ; Load byte, sign-extended to 4-byte -> char d
+2   movl 16(%ebp), %eax     ; Load 4-byte value -> int *p
+3   movl %edx, (%eax)       ; Stores d into address p
+4   movswl 8(%ebp),%eax     ; Load 2-byte value, sign extended to 4-byte -> short c
+5   movl 20(%ebp), %edx     ; Load 4-byte int -> x
+6   subl %eax, %edx         ; Compute x - c
+7   movl %edx, %eax         ; Returns x - c
+```
+
+```c
+int fun(short c, char d, int *p, int x) {
+    *p = d;
+    return x-c;
+}
+```
+
+# Practic problem 3.33
+
+```asm
+1 proc:
+2   pushl %ebp          ; Saves the caller's %ebp
+3   movl %esp, %ebp     ; Creates a new frame pointer for the procedure frame
+4   subl $40, %esp      ; allocates 40 bytes on the stack frame
+5   leal -4(%ebp), %eax ; Get x
+6   movl %eax, 8(%esp)  ; Store &x
+7   leal -8(%ebp), %eax ; Get y
+8   movl %eax, 4(%esp)  ; Store &y
+9   movl $.LC0, (%esp)  ; Pointer to string "%x %x"
+10  call scanf
+11  movl -4(%ebp), %eax
+12  subl -8(%ebp), %eax
+13  leave
+14  ret
+```
+
+**A. What value does %ebp get set to on line 3?**
+
+Before the proc starts executing %esp = 0x800040. When the proc executing, line 2 decrements the stack pointer by 4 and stores %ebp (0x800060) at the new top. So now:
+
+%esp = 0x800040 - 0x4 = 0x80003C
+
+And line 3, %ebp is set to %esp: %ebp = 0x80003C
+
+**B. What value does %esp get set to on line 4?**
+
+Lin 4 allocates 40 bytes on the stack, so:
+
+%esp = %esp - 40 = 0x80003C - 0x28 = 0x800014
+
+**C. At what addresses are local variables x and y stored?**
+
+x is stored at -4(%ebp) = 0x80003C - 0x4 = 0x800038
+y is stored at -8(%esp) = 0x80003C - 0x8 = 0x800034
