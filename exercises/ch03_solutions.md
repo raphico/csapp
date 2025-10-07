@@ -922,3 +922,40 @@ Lin 4 allocates 40 bytes on the stack, so:
 
 x is stored at -4(%ebp) = 0x80003C - 0x4 = 0x800038
 y is stored at -8(%esp) = 0x80003C - 0x8 = 0x800034
+
+# Practice problem 3.34
+
+```asm
+1   movl 8(%ebp), %ebx      ; Load x into %ebx
+2   movl $0, %eax           ; Set return register %eax = 0
+3   testl %ebx, %ebx        ; Set flags based on x (ZF=1 if x=0)
+4   je .L3                  ; if x == 0 goto L3
+5   movl %ebx, %eax         ; %eax = x
+6   shrl %eax               ; %eax = x >> 1
+7   movl %eax, (%esp)       ; push x >> 1 onto the stack
+8   call rfun               ; recursive call: rfun (x >> 1)
+9   movl %ebx, %edx         ; %edx = x
+10  andl $1, %edx           ; %edx = x & 1 (extract LSB)
+11  leal (%edx,%eax), %eax  ; eax = (x & 1) + <result of recurisve call>
+12 .L3:                     ; returns %eax
+```
+
+**A. What value does rfun store in the callee-save register %ebx?**
+
+Line 1 loads argument x into %ebx. So rfun stores x in %ebx
+
+**B. Fill in the missing expressions in the C code shown above**
+
+```c
+int rfun(unsigned x) {
+    if (x == 0)
+        return 0;
+    unsigned nx = x >> 1;
+    int rv = rfun(nx);
+    return (x & 0x1) + rv;
+}
+```
+
+**C. Describe in English what function this code computes**
+
+rfun returns the number of 1 bits in the binary representation of x

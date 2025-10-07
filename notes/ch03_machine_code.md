@@ -564,3 +564,7 @@ By IA32 convention:
 - **Stack Alignment Convention:**
 
   - gcc often allocates stack space in multiples of **16 bytes** for data alignment, even if not all space is used.
+
+## 3.7.5 Recursive procedures
+
+The stack naturally handle recursive calls by giving each its own space and automatically cleaning up when each return
