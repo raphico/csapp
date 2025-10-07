@@ -614,3 +614,21 @@ $$
 | `*(A + k)`   | dereference at offset `k` | load from base + (k × size)  |
 
 Pointer differences within the same data structure `&E[i] - E` yield integer indices, automatically scaled by element size
+
+## 3.8.3 Nested Arrays
+
+For declaration:
+
+```c
+T D[R][C]
+```
+
+- C stores all element row by row (i.e., all of row 0 first, then row 1, etc.)
+- Each row is an array of C elements of type T
+- The whole array occupies $L \times R \times C \text{ bytes}$
+
+If the array starting address is $x_{D}$, the address of the array element `D[i][j]`:
+
+$$
+x_{D} + L \cdot (C \cdot i + j)
+$$

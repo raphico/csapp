@@ -979,3 +979,20 @@ rfun returns the number of 1 bits in the binary representation of x
 | &S[i]      | short \* | $x_{s} + 2i$        | leal (%edx,%ecx,2),%eax    |
 | S[4*i + 1] | short    | $M[x_{s} + 8i + 2]$ | movw 2(%edx,%ecx,8),%ax    |
 | S + i - 5  | short \* | $x_{s} + 2i - 10$   | leal -10(%edx,%ecx,2),%eax |
+
+# Practice problem 3.37
+
+```asm
+i at %ebp+8, j at %ebp+12
+1   movl 8(%ebp), %ecx          ; Get i
+2   movl 12(%ebp), %edx         ; Get j
+3   leal 0(,%ecx,8), %eax       ; Compute i*8
+4   subl %ecx, %eax             ; Compute i*7
+5   addl %edx, %eax             ; Compute i*7 + j
+6   leal (%edx,%edx,4), %edx    ; Compute 5*j
+7   addl %ecx, %edx             ; Compute 5*j + i
+8   movl mat1(,%eax,4), %eax    ; Read from M[mat1 + 4*(i*7 + j)]
+9   addl mat2(,%edx,4), %eax    ; Read from M[mat1 + 4*(i*7 + j)] + M[mat2 + 4*(5*j + i)]
+```
+
+So N = 7 (the number of columns in mat1), M = 5 (the number of columns in mat2)
