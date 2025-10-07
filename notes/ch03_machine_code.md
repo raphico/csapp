@@ -568,3 +568,25 @@ By IA32 convention:
 ## 3.7.5 Recursive procedures
 
 The stack naturally handle recursive calls by giving each its own space and automatically cleaning up when each return
+
+# 3.8 Array allocation and access
+
+C array are just contiguous blocks of memory. Accessing an array element `a[i]` is really just pointer arithmetic `*(a + i)`. Compilers optimize these address computations for efficiency that the machine code might not look like the original indexing expression. Understanding this mapping is crucial for reading and reasoning about compiled code
+
+## 3.8.1 Basic principles
+
+For declaration:
+
+```c
+T A[N]
+```
+
+- Each element has size L bytes, where `L = sizeof(T)`
+- The array occupies $L \times N$ bytes in contiguous memory
+- If the starting address of the array is $x_{A}$
+
+The address of element `A[i]` is given by:
+
+$$
+x_{A} + L \cdot i
+$$

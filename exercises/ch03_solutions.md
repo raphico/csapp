@@ -959,3 +959,13 @@ int rfun(unsigned x) {
 **C. Describe in English what function this code computes**
 
 rfun returns the number of 1 bits in the binary representation of x
+
+# Practice problem 3.35
+
+| Array | Element size | Total size | Start address | Element _i_   |
+| ----- | ------------ | ---------- | ------------- | ------------- |
+| S     | 2            | 14         | $x_{S}$       | $x_{S} + 2i$  |
+| T     | 4            | 12         | $x_{T}$       | $x_{T} + 4i$  |
+| U     | 4            | 24         | $x_{U}$       | $x_{U} + 4i$  |
+| V     | 12           | 96         | $x_{V}$       | $x_{V} + 12i$ |
+| W     | 4            | 16         | $x_{W}$       | $x_{W} + 4i$  |
