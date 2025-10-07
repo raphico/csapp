@@ -996,3 +996,28 @@ i at %ebp+8, j at %ebp+12
 ```
 
 So N = 7 (the number of columns in mat1), M = 5 (the number of columns in mat2)
+
+# Practice problem 3.38
+
+```asm
+A at %ebp+8, val at %ebp+12
+1   movl 8(%ebp), %ecx      ; Load address of A
+2   movl 12(%ebp), %edx     ; Load val
+3   movl $0, %eax           ; offset = 0
+4 .L14:                     ; Loop start
+5   movl %edx, (%ecx,%eax)  ; Set *(A + offset) = val
+6   addl $68, %eax          ; Computes offset += 68 (stide between diagonal elements)
+7   cmpl $1088, %eax        ; compares offset to 1088
+8   jne .L14                ; if offset != 1088 loop
+```
+
+```c
+void fix_set_diag_opt(fix_matrix A, int val) {
+    int *Adiag = &A[0][0];
+    int i;
+    for (i = 0; i != N; i++) {
+        *Adiag = val;
+        Adiag += (N + 1);
+    }
+}
+```

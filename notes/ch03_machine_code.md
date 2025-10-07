@@ -632,3 +632,19 @@ If the array starting address is $x_{D}$, the address of the array element `D[i]
 $$
 x_{D} + L \cdot (C \cdot i + j)
 $$
+
+## 3.8.4 Fixed-sized arrays
+
+- For fixed-size arrays, compilers know each array's dimension at compile time, so it can precompute offsets and optimize memory access
+- Instead of recalculating the full index expression (like `A[i][j] = i * N + j`) each time, the compiler turns it into simple pointer increments
+- Accessing elements in a loop becomes faster, because each iteration just moves the pointer to the next element rather than recomputing the full address
+
+> Key takeaway: Arrays are arranged contiguously in memory, and compilers exploit this predictable layout to generate efficient address computations
+
+## 3.8.5 Variable-sized arrays
+
+- For variable-sized arrays, compilers can't precompute element addresses, since the array's size is given at runtime
+- To access element, compilers must calculate the full address dynamically (e.g. `base + (i * N + j) * size`)
+- The compiler can’t simplify the arithmetic into pointer increments because it doesn’t know the stride between elements in advance
+
+> Key takeaway: Variable-sized arrays trade flexibility for performance: each element access cost time because the address math happens at runtime, not during compilation
