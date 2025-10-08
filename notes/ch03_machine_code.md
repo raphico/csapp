@@ -651,8 +651,18 @@ $$
 
 # 3.9 Heterogenous data structures
 
-A C struct is a user-defined type that groups object of possibly different types into a single composite object. All fields are stored contiguously in memory, and a pointer to the struct points to its first byte. The compiler records the byte offset (how far, in bytes, a field is located from the start address) of each field and uses these offsets to generate memory references for field access
+## 3.9.1 Structures
 
-- Pointer arithmetic and LEA instructions efficiently compute addresses like `&r->a[i]`
-- An array or another struct is embedded directly within the struct, not a pointer to another block of memory
-- Field selection is entirely resolved at compile time; the machine code has no notion of field names
+A C struct is a user-defined type that groups object of possibly different types into a single composite object. All fields are stored contiguously in memory, and a pointer to the struct points to its first byte (**struct's address = address of its first field**). The compiler determines the fixed byte offsets for each field relative to the struct's base address. At runtime, field selection is just pure arithmetic: the CPU computes an address by adding the field's offset to the struct's base address, then performs a memory operation. Arrays within structs are embedded directly, not referenced via pointers. Because the layout is know at compile time, no metadata or field names appear in machine code, making structs zero-overhead abstractions that map directly to memory
+
+> The CPU treats structs as raw bytes. The compiler's symbolic knowledge (names, types) is stripped away after compilation, so correctness depends entirely on consistent layouts and careful use of types
+> Reordering fields within a struct changes their byte offsets. Any generated instruction that still uses the previous offset will interpret memory incorrectly unless recompiled, potentially resulting in silent memory corruption
+
+## 3.9.2 Unions
+
+A Union overlays multiple types onto the same memory, letting different fields interpret the same bytes differently. The compiler gives every fields the same starting address (offset 0), and the total size equals the largest field. This allows memory savings when only one variant is used at a time and allows reinterpretation of raw bit patterns. However, because the CPU has no notion of which is field is active, unions bypass C's type safety check. Misusing them can lead to portability and correctness problems—especially when data is shared between different machines or serialized—since endianness and field sizes may vary across systems
+
+> Why do you think this behavior (writing one type, reading as another) can be dangerous or undefined in C, even though the CPU doesn’t care?
+>
+> 1. This behavior can be dangerous especially when data is shared across systems with different endianness or type sizes, as it can lead to incorrect memory interpretation or memory corruption
+> 2. This behavior can also break the strict aliasing rule, which says that compiler can assume that pointers of different types don't point to the same memory. So if you store value as one type and read it as another, the compiler might reoder or optimize code in ways that break your expectation. Accessing different members of a union in this way is implementation-defined—it may work on some compilers, but it is not guaranteed by the C standard

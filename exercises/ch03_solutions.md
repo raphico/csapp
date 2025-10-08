@@ -1055,3 +1055,28 @@ void sp_init(struct prob *sp)
     sp->next = sp;
 }
 ```
+
+# Practice problem 3.40
+
+| **EXPR**             | **TYPE**  | **Code**                   |
+| -------------------- | --------- | -------------------------- |
+| `up->t1.s`           | `int`     | `movl 4(%eax), %eax`       |
+|                      |           | `movl %eax, (%edx)`        |
+|                      |           |                            |
+| `up->t1.v`           | `short`   | `movw (%eax), %ax`         |
+|                      |           | `movw %ax, (%edx)`         |
+|                      |           |                            |
+| `&up->t1.d`          | `short *` | `leal 2(%eax), %eax`       |
+|                      |           | `movl %eax, (%edx)`        |
+|                      |           |                            |
+| `up->t2.a`           | `int *`   | `movl %eax, (%edx)`        |
+|                      |           |                            |
+| `up->t2.a[up->t1.s]` | `int`     | `movl 4(%eax), %ecx`       |
+|                      |           | `leal (%eax,%ecx,4), %ecx` |
+|                      |           | `movl (%ecx), %eax`        |
+|                      |           | `movl %eax, (%edx)`        |
+|                      |           |                            |
+| `*up->t2.p`          | `char`    | `movl 8(%eax), %eax`       |
+|                      |           | `movb (%eax), (%edx)`      |
+|                      |           |                            |
+|                      |           |                            |
