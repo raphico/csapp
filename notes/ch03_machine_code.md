@@ -648,3 +648,11 @@ $$
 - The compiler can’t simplify the arithmetic into pointer increments because it doesn’t know the stride between elements in advance
 
 > Key takeaway: Variable-sized arrays trade flexibility for performance: each element access cost time because the address math happens at runtime, not during compilation
+
+# 3.9 Heterogenous data structures
+
+A C struct is a user-defined type that groups object of possibly different types into a single composite object. All fields are stored contiguously in memory, and a pointer to the struct points to its first byte. The compiler records the byte offset (how far, in bytes, a field is located from the start address) of each field and uses these offsets to generate memory references for field access
+
+- Pointer arithmetic and LEA instructions efficiently compute addresses like `&r->a[i]`
+- An array or another struct is embedded directly within the struct, not a pointer to another block of memory
+- Field selection is entirely resolved at compile time; the machine code has no notion of field names

@@ -1021,3 +1021,37 @@ void fix_set_diag_opt(fix_matrix A, int val) {
     }
 }
 ```
+
+# Practice problem 3.39
+
+**A. What are the offsets (in bytes) of the following fields?**
+
+p: 0
+s.x: 4  
+s.y: 8
+next: 12
+
+**B. How many total bytes does the structure require?**
+
+16 bytes
+
+**C. The compiler generates the following assembly code for the body of sp_init:**
+
+```asm
+sp at %ebp+8
+1   movl 8(%ebp), %eax  ; Get sp (pointer to struct prob)
+2   movl 8(%eax), %edx  ; Get sp->s.y
+3   movl %edx, 4(%eax)  ; sp->s.x = sp->s.y
+4   leal 4(%eax), %edx  ; Get (sp + 4); &sp->s.x
+5   movl %edx, (%eax)   ; sp->p = &sp->s.x
+6   movl %eax, 12(%eax) ; sp->next = sp
+```
+
+```c
+void sp_init(struct prob *sp)
+{
+    sp->s.x = sp->s.y;
+    sp->p = &(sp->s.x);
+    sp->next = sp;
+}
+```
