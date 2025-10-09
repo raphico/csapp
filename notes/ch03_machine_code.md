@@ -765,3 +765,27 @@ So we hav three levels of padding:
 3. At the beginning (rare): if placed inside another structure with stricter alignment rules.
 
 > The CPU trades spaces (through padding) so that it can access fields faster and simpler
+
+# 3.10 Putting it together: Understand pointers
+
+- Pointers are a compile-time abstractions. At machine level, pointers are just raw addresses
+- Pointer arithmetic depends on type size: adding 1 to `int *` moves by 4 bytes; adding 1 to `double *` moves by 8 bytes
+- `void *` is a generic pointer; it is used when the type is unknown. Must be cast to a specific type before dereferencing
+- & (address-of) gives the address of a value
+- \* (dereference) accesses the value stored at a pointer's address
+- Accessing an array element is just pointer arithmetic
+- Casting pointers change interpretation, not the bits
+  ```c
+  (int *)p + 7 // p + 7 * sizeof(int)
+  (int *)(p + 7) // (p + 7) * sizeof(original type)
+  ```
+- function pointers store strict addresses, which allows passing and invoking functions dynamically
+  ```c
+  int (*fp)(int, int*);
+  fp = fun;
+  result = fp(3, &y);
+  ```
+- Syntax trick:  
+  Read function pointer declarations inside-out:
+  - `int (*f)(int*)` → “f is a pointer to a function that takes an `int*` and returns an int.”
+  - Parentheses around `*f` are required otherwise it declares a function returning a pointer.
