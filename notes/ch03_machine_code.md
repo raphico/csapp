@@ -789,3 +789,7 @@ So we hav three levels of padding:
   Read function pointer declarations inside-out:
   - `int (*f)(int*)` → “f is a pointer to a function that takes an `int*` and returns an int.”
   - Parentheses around `*f` are required otherwise it declares a function returning a pointer.
+
+# 3.11 Life in the Real World: Using the gdb Debugger
+
+`gdb` allows developers to observe a running program at machine-level: inspect registers, memory, and control flow directly
