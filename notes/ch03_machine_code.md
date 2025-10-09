@@ -666,3 +666,102 @@ A Union overlays multiple types onto the same memory, letting different fields i
 >
 > 1. This behavior can be dangerous especially when data is shared across systems with different endianness or type sizes, as it can lead to incorrect memory interpretation or memory corruption
 > 2. This behavior can also break the strict aliasing rule, which says that compiler can assume that pointers of different types don't point to the same memory. So if you store value as one type and read it as another, the compiler might reoder or optimize code in ways that break your expectation. Accessing different members of a union in this way is implementation-defined—it may work on some compilers, but it is not guaranteed by the C standard
+
+## 3.9.3 Data alignment
+
+Data alignment is about where in memory data is stored (specifically at what address). Most CPU can access data much faster when data starts at an address that's a multiple of its size (or a related power of two). So the hardware and compiler align data types to these "nice" addresses.
+
+**Example Intuition:**
+
+Let's imagine a 64-bit processor that fetches memory in 8-byte chunk.
+
+- Each chunk starts at an address divisible by 8
+- For example
+  ```
+  0x00 - 0x07
+  0x08 - 0x0F
+  0x10 - 0x17
+  ```
+
+Now, say we have a double (8 bytes).
+
+- If the double is stored starting at an address divisible by 8 (e.g. `0x00`, `0x08`, `0x10`), it only takes one fetch
+- Otherwise, the double might span two blocks, so the CPU has to do two fetches and combine them
+- That's slower and some architecture don't even allow it
+
+Every data type has a natural alignment:
+
+| Type               | Alignment (typical 64-bit) |
+| ------------------ | -------------------------- |
+| `char`             | 1 byte                     |
+| `short`            | 2 bytes                    |
+| `int`, `float`     | 4 bytes                    |
+| `double`, pointers | 8 bytes                    |
+
+The compiler ensures each object starts at an address that's a multiple of its alignment
+
+The Essence of alignment: the CPU wants to each data object to fit neatly within its natural fetch boundaries for faster access. So to avoid misalignment, the compiler adds padding inside structures to ensure every field starts at a properly aligned address
+
+**Example 1:**
+
+```c
+struct S1 {
+   int i; // 4 bytes
+   char c; // 1 byte
+   int j; // 4 bytes
+}
+```
+
+Without padding, the struct occupies 9 bytes, but `j` is misaligned:
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0-3         | `i`     |
+| 4           | `c`     |
+| 5–8         | `j`     |
+
+So the compiler adds padding after `c`:
+
+- After `c` at offset 4, the next multiple of 4 is at address 8
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0-3         | `i`     |
+| 4           | `c`     |
+| 5-7         | padding |
+| 8–11        | `j`     |
+
+so the total size = 12 bytes
+
+**Example 2:**
+
+```c
+struct S2 {
+    int i;
+    int j;
+    char c;
+};
+```
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0-3         | `i`     |
+| 4-7         | `j`     |
+| 8           | `c`     |
+
+Without padding, the struct occupies 9 bytes with all fields properly aligned. This is fine for one struct, but not for an arrays of the struct. Because if one `S2` occupies 9 bytes, then the second one starts at offset 9, which isn't a multiple of 4. So the compiler pads it to 12 bytes
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0-3         | `i`     |
+| 4-7         | `j`     |
+| 8           | `c`     |
+| 9-11        | padding |
+
+So we hav three levels of padding:
+
+1. Between fields: so each field starts correctly aligned.
+2. At the end of the struct: so arrays of structs stay aligned.
+3. At the beginning (rare): if placed inside another structure with stricter alignment rules.
+
+> The CPU trades spaces (through padding) so that it can access fields faster and simpler

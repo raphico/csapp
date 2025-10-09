@@ -1080,3 +1080,101 @@ void sp_init(struct prob *sp)
 |                      |           | `movb (%eax), (%edx)`      |
 |                      |           |                            |
 |                      |           |                            |
+
+# Practice problem 3.41
+
+**A. struct P1 { int i; char c; int j; char d; };**
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0-3         | `i`     |
+| 4           | `c`     |
+| 5-7         | padding |
+| 8-11        | `j`     |
+| 12          | `d`     |
+| 13-15       | padding |
+
+total size = 16 bytes
+Aligment: 4
+
+**B. struct P2 { int i; char c; char d; int j; };**
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0-3         | `i`     |
+| 4           | `c`     |
+| 5           | `d`     |
+| 8-11        | `j`     |
+
+total size = 12 bytes
+Alignment: 4
+
+**C. struct P3 { short w[3]; char c[3] };**
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0-5         | `w`     |
+| 6-8         | `c`     |
+| 9           | padding |
+
+total size = 10 bytes
+Aligment: 2
+
+**D. struct P4 { short w[3]; char \*c[3] };**
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0-5         | `w`     |
+| 6-7         | padding |
+| 8-19        | `c`     |
+
+total size = 20 bytes
+Aligment: 4
+
+**E. struct P3 { struct P1 a[2]; struct P2 \*p };**
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0-31        | `a`     |
+| 32-35       | `p`     |
+
+total size = 36 bytes
+Aligment: 4
+
+# Practice problem 3.42
+
+**A. What are the byte offsets of all the fields in the structure?**
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0-3         | `a`     |
+| 4-5         | `b`     |
+| 6-7         | padding |
+| 8-15        | `c`     |
+| 16          | `d`     |
+| 17-19       | padding |
+| 20-23       | `e`     |
+| 24          | `f`     |
+| 25-31       | padding |
+| 32-39       | `g`     |
+| 40-43       | `h`     |
+| 44-47       | padding |
+
+**B. What is the total size of the structure?**
+
+48 bytes
+
+**C. Rearrange the fields of the structure to minimize wasted space, and then show the byte offsets and total size for the rearranged structure.**
+
+| Byte Offset | Purpose |
+| ----------- | ------- |
+| 0           | `d`     |
+| 1           | `f`     |
+| 2-3         | `b`     |
+| 4-7         | `a`     |
+| 8-11        | `e`     |
+| 12-15       | `h`     |
+| 16-23       | `c`     |
+| 24-31       | `g`     |
+
+Total size = 32 bytes
